@@ -196,8 +196,8 @@ class DFSplitterPanel(wx.Panel):
         )
         topPanel = wx.Panel(splitter)
         bottomPanel = wx.Panel(splitter)
-        topPanel.SetBackgroundColour("SEA GREEN")
-        bottomPanel.SetBackgroundColour("STEEL BLUE")
+        topPanel.SetBackgroundColour("#AED6F1")
+        bottomPanel.SetBackgroundColour("#F9E79F")
 
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
