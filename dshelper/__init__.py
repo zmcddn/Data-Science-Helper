@@ -8,4 +8,4 @@ Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"
