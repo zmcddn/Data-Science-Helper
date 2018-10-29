@@ -165,6 +165,25 @@ class DataTablePanel(wx.Panel):
         # pub.subscribe(self.getResult, "analysisOrderCondition")
 
 
+class LogPanel(wx.Panel):
+    def __init__(self, parent, id):
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
+        self.log = wx.TextCtrl(self, style=style)
+        self.log.SetBackgroundColour("#D5F5E3")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.log, 1, wx.ALL | wx.EXPAND)
+        self.SetSizer(sizer)
+
+        self.log.write(
+            "Log begins here at time: {:%d, %b %Y, %H:%M}\n".format(
+                datetime.datetime.now()
+            )
+        )
+
+
 class DFSplitterPanel(wx.Panel):
     """
     A top and bottom splitter panel to display dataframe data and summary (i.e. df.describe)
@@ -227,7 +246,7 @@ class SideSplitterPanel(wx.Panel):
         data_notebook.SetBackgroundColour("WHITE")
         self.info_page = wx.Panel(data_notebook)
         self.column_page = wx.Panel(data_notebook)
-        self.log_page = wx.Panel(data_notebook)
+        self.log_page = LogPanel(data_notebook, -1)
 
         # Add pages into the notebook for display
         data_notebook.AddPage(self.info_page, "Info")
