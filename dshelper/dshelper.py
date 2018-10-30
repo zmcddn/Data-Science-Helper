@@ -39,6 +39,7 @@ class LogPanel(wx.Panel):
                 datetime.datetime.now()
             )
         )
+        self.log.write("wxPython version: {}\n".format(wx.__version__))
 
 
 class DFSplitterPanel(wx.Panel):

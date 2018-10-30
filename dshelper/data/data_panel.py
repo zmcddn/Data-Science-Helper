@@ -15,18 +15,24 @@ import pandas as pd
 import numpy as np
 import datetime
 
+if wx.__version__[0] != "4":
+    # Add compatibility with wxpython 3.*
+    GRID_TABLE_CONSTRUCTOR = wx.grid.PyGridTableBase
+else:
+    GRID_TABLE_CONSTRUCTOR = wx.grid.GridTableBase
+
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
 GRID_LINE_COLOUR = "#D3D3D3"
 
 
-class DataTable(wx.grid.PyGridTableBase):
+class DataTable(GRID_TABLE_CONSTRUCTOR):
     """
     A grid table to show dataframe 
     """
 
     def __init__(self, data=None):
-        wx.grid.PyGridTableBase.__init__(self)
+        GRID_TABLE_CONSTRUCTOR.__init__(self)
 
         self.INIT_ROWS = 40
         self.INIT_COLS = 100
@@ -70,7 +76,7 @@ class DataTable(wx.grid.PyGridTableBase):
         #         return 'Index'
         #     else:
         #         return self.data.index.name
-        return self.data.columns[col]
+        return str(self.data.columns[col])
 
     def GetRowLabelValue(self, row):
         return str(self.data.index[row])
@@ -149,7 +155,7 @@ class DataTablePanel(wx.Panel):
 
         # Set grid for displaying dataframe as table
         table = DataTable(df)
-        self.grid.SetTable(table)
+        self.grid.SetTable(table, takeOwnership=True)
         self.grid.SetGridLineColour(GRID_LINE_COLOUR)
 
         # Setup row/column size and alignment
@@ -163,3 +169,7 @@ class DataTablePanel(wx.Panel):
         self.SetSizer(sizer)
 
         # pub.subscribe(self.getResult, "analysisOrderCondition")
+
+
+if __name__ == "__main__":
+    print(wx.__version__[0])
