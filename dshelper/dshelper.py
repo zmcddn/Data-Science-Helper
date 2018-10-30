@@ -76,6 +76,11 @@ class DFSplitterPanel(wx.Panel):
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
         topPanel.SetSizer(sizer)
 
+        self.data_describe = DataTablePanel(bottomPanel, -1, df=df.describe())
+        bottom_sizer = wx.BoxSizer()
+        bottom_sizer.Add(self.data_describe, 1, wx.EXPAND | wx.SP_NOBORDER)
+        bottomPanel.SetSizer(bottom_sizer)
+
         # Setup splitter window and put it in a sizer for display
         splitter.SplitHorizontally(topPanel, bottomPanel)
         splitter.SetSashGravity(0.7)  # Set proportion for the splitter window
@@ -84,16 +89,17 @@ class DFSplitterPanel(wx.Panel):
         self.SetSizer(PanelSizer)
 
     def get_df(self):
-        # Test dataframe
-        todays_date = datetime.datetime.now().date()
-        index = pd.date_range(
-            todays_date - datetime.timedelta(10), periods=10, freq="D"
-        )
-        df = pd.DataFrame(index=index, columns=list(range(30)))
-        df = df.fillna(500)
-        # df.reset_index(inplace=True)
-        # df = pd.DataFrame(np.random.random((10, 5)))
-        # print(df)
+        # # Test dataframe
+        # todays_date = datetime.datetime.now().date()
+        # index = pd.date_range(
+        #     todays_date - datetime.timedelta(10), periods=10, freq="D"
+        # )
+        # df = pd.DataFrame(index=index, columns=list(range(30)))
+        # df = df.fillna(500)
+        # # df.reset_index(inplace=True)
+        # # df = pd.DataFrame(np.random.random((10, 5)))
+
+        df = pd.read_csv('./titanic_data/train.csv')
 
         return df
 
