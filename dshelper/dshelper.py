@@ -57,10 +57,12 @@ class DFSplitterPanel(wx.Panel):
         topPanel.SetBackgroundColour("#AED6F1")
         bottomPanel.SetBackgroundColour("#F9E79F")
 
+        df = self.get_df()
+
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
         data_notebook = wx.Notebook(topPanel)
-        self.raw_data_page = DataTablePanel(data_notebook, -1)
+        self.raw_data_page = DataTablePanel(data_notebook, -1, df=df)
         self.plot_page = wx.Panel(data_notebook)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
@@ -80,6 +82,20 @@ class DFSplitterPanel(wx.Panel):
         PanelSizer = wx.BoxSizer(wx.VERTICAL)
         PanelSizer.Add(splitter, 1, wx.EXPAND | wx.ALL)
         self.SetSizer(PanelSizer)
+
+    def get_df(self):
+        # Test dataframe
+        todays_date = datetime.datetime.now().date()
+        index = pd.date_range(
+            todays_date - datetime.timedelta(10), periods=10, freq="D"
+        )
+        df = pd.DataFrame(index=index, columns=list(range(30)))
+        df = df.fillna(500)
+        # df.reset_index(inplace=True)
+        # df = pd.DataFrame(np.random.random((10, 5)))
+        # print(df)
+
+        return df
 
 
 class SideSplitterPanel(wx.Panel):

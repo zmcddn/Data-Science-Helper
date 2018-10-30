@@ -136,22 +136,11 @@ class DataTable(GRID_TABLE_CONSTRUCTOR):
 
 
 class DataTablePanel(wx.Panel):
-    def __init__(self, parent, id):
+    def __init__(self, parent, id, df=None):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
         self.grid = wx.grid.Grid(self)
 
         self.parent = parent
-
-        # Test dataframe
-        todays_date = datetime.datetime.now().date()
-        index = pd.date_range(
-            todays_date - datetime.timedelta(10), periods=10, freq="D"
-        )
-        df = pd.DataFrame(index=index, columns=list(range(30)))
-        df = df.fillna(500)
-        # df.reset_index(inplace=True)
-        # df = pd.DataFrame(np.random.random((10, 5)))
-        # print(df)
 
         # Set grid for displaying dataframe as table
         table = DataTable(df)
