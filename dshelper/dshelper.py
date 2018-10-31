@@ -15,11 +15,27 @@ import pandas as pd
 import numpy as np
 import datetime
 
-from data.data_panel import DataTablePanel
+from data.data_panel import DataTablePanel, InfoPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
 GRID_LINE_COLOUR = "#D3D3D3"
+
+
+def get_df():
+    # # Test dataframe
+    # todays_date = datetime.datetime.now().date()
+    # index = pd.date_range(
+    #     todays_date - datetime.timedelta(10), periods=10, freq="D"
+    # )
+    # df = pd.DataFrame(index=index, columns=list(range(30)))
+    # df = df.fillna(500)
+    # # df.reset_index(inplace=True)
+    # # df = pd.DataFrame(np.random.random((10, 5)))
+
+    df = pd.read_csv("./titanic_data/train.csv")
+
+    return df
 
 
 class LogPanel(wx.Panel):
@@ -57,7 +73,7 @@ class DFSplitterPanel(wx.Panel):
         topPanel.SetBackgroundColour("#AED6F1")
         bottomPanel.SetBackgroundColour("#F9E79F")
 
-        df = self.get_df()
+        df = get_df()
 
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
@@ -88,21 +104,6 @@ class DFSplitterPanel(wx.Panel):
         PanelSizer.Add(splitter, 1, wx.EXPAND | wx.ALL)
         self.SetSizer(PanelSizer)
 
-    def get_df(self):
-        # # Test dataframe
-        # todays_date = datetime.datetime.now().date()
-        # index = pd.date_range(
-        #     todays_date - datetime.timedelta(10), periods=10, freq="D"
-        # )
-        # df = pd.DataFrame(index=index, columns=list(range(30)))
-        # df = df.fillna(500)
-        # # df.reset_index(inplace=True)
-        # # df = pd.DataFrame(np.random.random((10, 5)))
-
-        df = pd.read_csv('./titanic_data/train.csv')
-
-        return df
-
 
 class SideSplitterPanel(wx.Panel):
     """
@@ -120,11 +121,13 @@ class SideSplitterPanel(wx.Panel):
         leftPanel.SetBackgroundColour("YELLOW GREEN")
         rightPanel.SetBackgroundColour("SLATE BLUE")
 
+        df = get_df()
+
         # Create a notebook for the right panel (log/stat panel)
         # each page serves a different function
         data_notebook = wx.Notebook(rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
-        self.info_page = wx.Panel(data_notebook)
+        self.info_page = InfoPanel(data_notebook, -1, df=df)
         self.column_page = wx.Panel(data_notebook)
         self.log_page = LogPanel(data_notebook, -1)
 

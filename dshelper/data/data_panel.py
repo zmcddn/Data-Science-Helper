@@ -13,7 +13,9 @@ import wx.grid
 
 import pandas as pd
 import numpy as np
+
 import datetime
+import io
 
 if wx.__version__[0] != "4":
     # Add compatibility with wxpython 3.*
@@ -136,6 +138,10 @@ class DataTable(GRID_TABLE_CONSTRUCTOR):
 
 
 class DataTablePanel(wx.Panel):
+    """
+    A panel displays the data in tabular format
+    """
+
     def __init__(self, parent, id, df=None):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
         self.grid = wx.grid.Grid(self)
@@ -158,6 +164,31 @@ class DataTablePanel(wx.Panel):
         self.SetSizer(sizer)
 
         # pub.subscribe(self.getResult, "analysisOrderCondition")
+
+
+class InfoPanel(wx.Panel):
+    """A panel shows the data info"""
+
+    def __init__(self, parent, id, df=None):
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+
+        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
+        font1 = wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u"Consolas")
+        self.df_info = wx.TextCtrl(self, style=style)
+        self.df_info.SetFont(font1)
+        self.df_info.SetBackgroundColour("#FCF3CF")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.df_info, 1, wx.ALL | wx.EXPAND)
+        self.SetSizer(sizer)
+
+        if df is None:
+            self.df_info.write("Please import a dataframe")
+        else:
+            buffer = io.StringIO()
+            df.info(buf=buffer)
+            s = buffer.getvalue()
+            self.df_info.write(s)
 
 
 if __name__ == "__main__":
