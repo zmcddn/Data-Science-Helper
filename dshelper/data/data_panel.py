@@ -159,6 +159,8 @@ class DataTablePanel(wx.Panel):
         self.grid.SetRowLabelSize(wx.grid.GRID_AUTOSIZE)
         self.grid.SetDefaultCellAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
 
+        self.grid.EnableDragColMove()
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND)
         self.SetSizer(sizer)
