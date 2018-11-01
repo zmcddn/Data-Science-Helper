@@ -8,12 +8,13 @@ Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-import wx
-import wx.grid
+import datetime
 
 import pandas as pd
 import numpy as np
-import datetime
+
+import wx
+import wx.grid
 
 from data.data_panel import DataTablePanel, InfoPanel
 

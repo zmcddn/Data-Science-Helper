@@ -8,14 +8,14 @@ Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-import wx
-import wx.grid
+import datetime
+import io
 
 import pandas as pd
 import numpy as np
 
-import datetime
-import io
+import wx
+import wx.grid
 
 if wx.__version__[0] != "4":
     # Add compatibility with wxpython 3.*
