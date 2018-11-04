@@ -18,7 +18,7 @@ import wx
 import wx.grid
 import wx.lib.mixins.listctrl
 
-if int(wx.__version__[0]) < "4":
+if int(wx.__version__[0]) < 4:
     # Add compatibility with wxpython 3.*
     GRID_TABLE_CONSTRUCTOR = wx.grid.PyGridTableBase
 else:
@@ -225,7 +225,7 @@ class ColumnSelectionPanel(wx.Panel):
 
         idx = 0
         for row in rows:
-            if int(wx.__version__[0]) < "4":
+            if int(wx.__version__[0]) < 4:
                 # wxpython 3 compatibility
                 index = self.column_list.InsertStringItem(idx, row[0])
                 self.column_list.SetStringItem(index, 1, row[1])
