@@ -16,7 +16,7 @@ import numpy as np
 import wx
 import wx.grid
 
-from data.data_panel import DataTablePanel, InfoPanel
+from data.data_panel import DataTablePanel, InfoPanel, ColumnSelectionPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -129,7 +129,7 @@ class SideSplitterPanel(wx.Panel):
         data_notebook = wx.Notebook(rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
         self.info_page = InfoPanel(data_notebook, -1, df=df)
-        self.column_page = wx.Panel(data_notebook)
+        self.column_page = ColumnSelectionPanel(data_notebook, -1, df=df)
         self.log_page = LogPanel(data_notebook, -1)
 
         # Add pages into the notebook for display

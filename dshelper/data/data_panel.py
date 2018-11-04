@@ -16,8 +16,9 @@ import numpy as np
 
 import wx
 import wx.grid
+import wx.lib.mixins.listctrl
 
-if wx.__version__[0] != "4":
+if int(wx.__version__[0]) < "4":
     # Add compatibility with wxpython 3.*
     GRID_TABLE_CONSTRUCTOR = wx.grid.PyGridTableBase
 else:
@@ -195,5 +196,49 @@ class InfoPanel(wx.Panel):
             self.df_info.write(s)
 
 
+class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
+    """
+    A listCtrl object showing all the columns 
+    """
+
+    def __init__(self, parent, *args, **kw):
+        wx.ListCtrl.__init__(self, parent, wx.ID_ANY, style=wx.LC_REPORT)
+        wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin.__init__(self)
+
+
+class ColumnSelectionPanel(wx.Panel):
+    """A panel shows the data column info"""
+
+    def __init__(self, parent, id, df=None):
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+
+        self.df = df
+
+        rows = []
+        for num, column_types in enumerate(self.df.dtypes):
+            rows.append((self.df.columns[num], str(column_types)))
+
+        self.column_list = ColumnSelectionList(self)
+
+        self.column_list.InsertColumn(0, "Name")
+        self.column_list.InsertColumn(1, "Type")
+
+        idx = 0
+        for row in rows:
+            if int(wx.__version__[0]) < "4":
+                # wxpython 3 compatibility
+                index = self.column_list.InsertStringItem(idx, row[0])
+                self.column_list.SetStringItem(index, 1, row[1])
+            else:
+                # wxpython 4 way
+                index = self.column_list.InsertItem(idx, row[0])
+                self.column_list.SetItem(index, 1, row[1])
+            idx += 1
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.column_list, 1, wx.ALL | wx.EXPAND)
+        self.SetSizer(sizer)
+
+
 if __name__ == "__main__":
-    print(wx.__version__[0])
+    print(int(wx.__version__[0]))
