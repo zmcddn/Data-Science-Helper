@@ -150,7 +150,8 @@ class DataTablePanel(wx.Panel):
         self.parent = parent
 
         # Set grid for displaying dataframe as table
-        table = DataTable(df)
+        self.df = df
+        table = DataTable(self.df)
         self.grid.SetTable(table, takeOwnership=True)
         self.grid.SetGridLineColour(GRID_LINE_COLOUR)
 
@@ -162,13 +163,56 @@ class DataTablePanel(wx.Panel):
 
         # This works, but then the select cells doesn't work as expected
         # Need another way of re-arrange columns
-        # self.grid.EnableDragColMove()
+        self.grid.EnableDragColMove()
+        self.Bind(wx.grid.EVT_GRID_COL_MOVE, self.OnColMove)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND)
-        self.SetSizer(sizer)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND)
+        self.SetSizer(self.sizer)
 
         # pub.subscribe(self.getResult, "analysisOrderCondition")
+
+    def OnColMove(self, evt):
+        # Draging column
+        colId = evt.GetCol()
+        colPos = self.grid.GetColPos(colId)
+        wx.CallAfter(self.OnColMoved, colId, colPos)
+        # allow the move to complete
+
+    def OnColMoved(self, colId, oldPos):
+        # once the move is done, GetColPos() returns the new position
+        newPos = self.grid.GetColPos(colId)
+        print(colId, "from", oldPos, "to", newPos)
+
+        # Reset the draged column for re-ploting the df
+        # otherwise selecting the datafrom will skip columns
+        self.grid.SetColPos(colId, oldPos)
+
+        # Get column position
+        cols = list(self.df.columns)
+        if newPos > oldPos:
+            # Drag rightward
+            cols.insert(newPos, cols[oldPos])
+            cols.pop(oldPos)
+        else:
+            # Drag leftward
+            cols.insert(newPos, cols[oldPos])
+            cols.pop(oldPos + 1)
+
+        # Reset the df with new column position
+        df = self.df.reindex(columns=cols)
+
+        # Update df for display
+        self._update_data(df)
+
+    def _update_data(self, df):
+        # Update the dataframe for display
+        self.df = df
+
+        table = DataTable(self.df)
+        self.grid.SetTable(table, takeOwnership=True)
+        self.grid.Refresh()
+        self.grid.AutoSize()
 
 
 class InfoPanel(wx.Panel):
@@ -204,6 +248,17 @@ class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthM
     def __init__(self, parent, *args, **kw):
         wx.ListCtrl.__init__(self, parent, wx.ID_ANY, style=wx.LC_REPORT)
         wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin.__init__(self)
+
+        self.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.right_click)
+        self.Bind(wx.EVT_LIST_BEGIN_DRAG, self.left_drag)
+
+    def right_click(self, event):
+        item = event.GetItem()
+        print("Item selected:", item.GetText())
+
+    def left_drag(self, event):
+        print("left mouse drag")
+        pass
 
 
 class ColumnSelectionPanel(wx.Panel):
