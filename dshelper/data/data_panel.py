@@ -17,6 +17,7 @@ import numpy as np
 import wx
 import wx.grid
 import wx.lib.mixins.listctrl
+from wx.lib.pubsub import pub
 
 if int(wx.__version__[0]) < 4:
     # Add compatibility with wxpython 3.*
@@ -180,16 +181,23 @@ class DataTablePanel(wx.Panel):
         # allow the move to complete
 
     def OnColMoved(self, colId, oldPos):
+        cols = list(self.df.columns)
+
         # once the move is done, GetColPos() returns the new position
         newPos = self.grid.GetColPos(colId)
-        print(colId, "from", oldPos, "to", newPos)
+
+        # Send log message
+        log_message = "Column '{}' changed from position {} to {}".format(
+            cols[colId], oldPos, newPos
+        )
+        # print(colId, "from", oldPos, "to", newPos)
+        pub.sendMessage("LOG_MESSAGE", log_message=log_message)
 
         # Reset the draged column for re-ploting the df
         # otherwise selecting the datafrom will skip columns
         self.grid.SetColPos(colId, oldPos)
 
         # Get column position
-        cols = list(self.df.columns)
         if newPos > oldPos:
             # Drag rightward
             cols.insert(newPos, cols[oldPos])

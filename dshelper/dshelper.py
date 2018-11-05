@@ -15,6 +15,7 @@ import numpy as np
 
 import wx
 import wx.grid
+from wx.lib.pubsub import pub
 
 from data.data_panel import DataTablePanel, InfoPanel, ColumnSelectionPanel
 
@@ -57,6 +58,12 @@ class LogPanel(wx.Panel):
             )
         )
         self.log.write("wxPython version: {}\n".format(wx.__version__))
+
+        pub.subscribe(self.PrintMessage, "LOG_MESSAGE")
+
+    def PrintMessage(self, log_message):
+        self.log.write(log_message)
+        self.log.write("\n")
 
 
 class DFSplitterPanel(wx.Panel):
