@@ -278,13 +278,27 @@ class ColumnSelectionPanel(wx.Panel):
         self.df = df
 
         rows = []
+        non_null_count = self.df.notnull().sum()
+        null_count = self.df.isnull().sum()
+        non_null_percentage = non_null_count / self.df.shape[0]
         for num, column_types in enumerate(self.df.dtypes):
-            rows.append((self.df.columns[num], str(column_types)))
+            rows.append(
+                (
+                    self.df.columns[num],
+                    str(column_types),
+                    str(non_null_count[num]),
+                    str(null_count[num]),
+                    "{:.2%}".format(non_null_percentage[num]),
+                )
+            )
 
         self.column_list = ColumnSelectionList(self)
 
         self.column_list.InsertColumn(0, "Name")
         self.column_list.InsertColumn(1, "Type")
+        self.column_list.InsertColumn(2, "Non Null")
+        self.column_list.InsertColumn(3, "Null")
+        self.column_list.InsertColumn(4, "Non Null Percentage")
 
         idx = 0
         for row in rows:
@@ -292,10 +306,16 @@ class ColumnSelectionPanel(wx.Panel):
                 # wxpython 3 compatibility
                 index = self.column_list.InsertStringItem(idx, row[0])
                 self.column_list.SetStringItem(index, 1, row[1])
+                self.column_list.SetStringItem(index, 2, row[2])
+                self.column_list.SetStringItem(index, 3, row[3])
+                self.column_list.SetStringItem(index, 4, row[4])
             else:
                 # wxpython 4 way
                 index = self.column_list.InsertItem(idx, row[0])
                 self.column_list.SetItem(index, 1, row[1])
+                self.column_list.SetItem(index, 2, row[2])
+                self.column_list.SetItem(index, 3, row[3])
+                self.column_list.SetItem(index, 4, row[4])
             idx += 1
 
         sizer = wx.BoxSizer(wx.VERTICAL)
