@@ -71,8 +71,11 @@ class DFSplitterPanel(wx.Panel):
     A top and bottom splitter panel to display dataframe data and summary (i.e. df.describe)
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, df=None):
         wx.Panel.__init__(self, parent)
+
+        self.df = df
+
         splitter = wx.SplitterWindow(
             self, style=wx.SP_NOBORDER | wx.SP_3DSASH | wx.SP_LIVE_UPDATE
         )
@@ -81,12 +84,10 @@ class DFSplitterPanel(wx.Panel):
         topPanel.SetBackgroundColour("#AED6F1")
         bottomPanel.SetBackgroundColour("#F9E79F")
 
-        df = get_df()
-
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
         data_notebook = wx.Notebook(topPanel)
-        self.raw_data_page = DataTablePanel(data_notebook, -1, df=df)
+        self.raw_data_page = DataTablePanel(data_notebook, -1, df=self.df)
         self.plot_page = wx.Panel(data_notebook)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
@@ -100,7 +101,7 @@ class DFSplitterPanel(wx.Panel):
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
         topPanel.SetSizer(sizer)
 
-        self.data_describe = DataTablePanel(bottomPanel, -1, df=df.describe())
+        self.data_describe = DataTablePanel(bottomPanel, -1, df=self.df.describe())
         bottom_sizer = wx.BoxSizer()
         bottom_sizer.Add(self.data_describe, 1, wx.EXPAND | wx.SP_NOBORDER)
         bottomPanel.SetSizer(bottom_sizer)
@@ -118,25 +119,26 @@ class SideSplitterPanel(wx.Panel):
     A left and right splitter panel to display the dataframe and log/stats
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, df=None):
         """Constructor"""
         wx.Panel.__init__(self, parent)
+
+        self.df = df
+
         splitter = wx.SplitterWindow(
             self, style=wx.SP_NOBORDER | wx.SP_3DSASH | wx.SP_LIVE_UPDATE
         )
-        leftPanel = DFSplitterPanel(splitter)
+        leftPanel = DFSplitterPanel(splitter, df=self.df)
         rightPanel = wx.Panel(splitter)
         leftPanel.SetBackgroundColour("YELLOW GREEN")
         rightPanel.SetBackgroundColour("SLATE BLUE")
-
-        df = get_df()
 
         # Create a notebook for the right panel (log/stat panel)
         # each page serves a different function
         data_notebook = wx.Notebook(rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
-        self.info_page = InfoPanel(data_notebook, -1, df=df)
-        self.column_page = ColumnSelectionPanel(data_notebook, -1, df=df)
+        self.info_page = InfoPanel(data_notebook, -1, df=self.df)
+        self.column_page = ColumnSelectionPanel(data_notebook, -1, df=self.df)
         self.log_page = LogPanel(data_notebook, -1)
 
         # Add pages into the notebook for display
@@ -162,9 +164,11 @@ class MainFrame(wx.Frame):
     def __init__(self, parent, id):
         wx.Frame.__init__(self, None, title="Data Science Helper")
 
+        self.df = get_df()
+
         # self.sb=self.CreateStatusBar()
 
-        self.main_splitter = SideSplitterPanel(self)
+        self.main_splitter = SideSplitterPanel(self, df=self.df)
 
         # self.sb.SetStatusText("ss")
 
