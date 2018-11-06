@@ -165,12 +165,23 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, title="Data Science Helper")
 
         self.df = get_df()
+        cols = self.df.shape[1]
+        rows = self.df.shape[0]
+        _memory_use = self.df.memory_usage(deep=True).sum() / 1024
+        # Note that this would be equivalent to df.info(memory_usage='deep')
+        if _memory_use > 1024:
+            memory_usage = "{:.2f} MB".format(_memory_use / 1024)
+        else:
+            memory_usage = "{:.2f} KB".format(_memory_use)
 
-        # self.sb=self.CreateStatusBar()
+        self.status_bar = self.CreateStatusBar(3)
 
         self.main_splitter = SideSplitterPanel(self, df=self.df)
 
-        # self.sb.SetStatusText("ss")
+        self.status_bar.SetStatusText(" Rows: {}".format(rows), 0)
+        self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
+        self.status_bar.SetStatusText(" Memory Usage: {}".format(memory_usage), 2)
+        self.status_bar.SetStatusWidths([200, 200, -1])
 
         self.Refresh()
         self.Show()
