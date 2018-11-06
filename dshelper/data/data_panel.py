@@ -232,16 +232,17 @@ class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthM
         wx.ListCtrl.__init__(self, parent, wx.ID_ANY, style=wx.LC_REPORT)
         wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin.__init__(self)
 
-        self.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.right_click)
-        self.Bind(wx.EVT_LIST_BEGIN_DRAG, self.left_drag)
+    #     self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.left_click)
+    #     # self.Bind(wx.EVT_LIST_BEGIN_DRAG, self.left_drag)
 
-    def right_click(self, event):
-        item = event.GetItem()
-        print("Item selected:", item.GetText())
+    # def left_click(self, event):
+    #     item = event.GetItem()
+    #     print("Item selected:", item.GetText())
+    #     event.skip()
 
-    def left_drag(self, event):
-        print("left mouse drag")
-        pass
+    # def left_drag(self, event):
+    #     print("left mouse drag")
+    #     pass
 
 
 class ColumnSelectionPanel(wx.Panel):
@@ -293,9 +294,30 @@ class ColumnSelectionPanel(wx.Panel):
                 self.column_list.SetItem(index, 4, row[4])
             idx += 1
 
+        # Set the background color of the table
+        row_num = self.column_list.GetItemCount()
+        for index in range(row_num):
+            self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.column_list, 1, wx.ALL | wx.EXPAND)
         self.SetSizer(sizer)
+
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.left_click)
+
+    def left_click(self, event):
+        # Left click on the row to select or deselect a column
+        item = event.GetItem()
+
+        background_color = self.column_list.GetItemBackgroundColour(
+            event.GetIndex()
+        ).GetAsString(wx.C2S_HTML_SYNTAX)
+        if background_color == "#D5F5E3":
+            self.column_list.SetItemBackgroundColour(event.GetIndex(), "#FCF3CF")
+            print("Item selected:", item.GetText())
+        else:
+            self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
+            print("Item deselected:", item.GetText())
 
 
 if __name__ == "__main__":
