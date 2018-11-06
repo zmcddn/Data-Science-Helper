@@ -223,31 +223,6 @@ class DataTablePanel(wx.Panel):
         self.grid.AutoSize()
 
 
-class InfoPanel(wx.Panel):
-    """A panel shows the data info"""
-
-    def __init__(self, parent, id, df=None):
-        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
-
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
-        font1 = wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u"Consolas")
-        self.df_info = wx.TextCtrl(self, style=style)
-        self.df_info.SetFont(font1)
-        self.df_info.SetBackgroundColour("#FCF3CF")
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.df_info, 1, wx.ALL | wx.EXPAND)
-        self.SetSizer(sizer)
-
-        if df is None:
-            self.df_info.write("Please import a dataframe")
-        else:
-            buffer = io.StringIO()
-            df.info(buf=buffer)
-            s = buffer.getvalue()
-            self.df_info.write(s)
-
-
 class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
     """
     A listCtrl object showing all the columns 
