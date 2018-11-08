@@ -319,6 +319,8 @@ class ColumnSelectionPanel(wx.Panel):
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
             print("Item deselected:", item.GetText())
 
+        self.column_list.Select(event.GetIndex(), on=0)  # De-select row
+
 
 if __name__ == "__main__":
     print(int(wx.__version__[0]))
