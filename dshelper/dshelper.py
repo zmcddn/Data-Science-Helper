@@ -17,7 +17,7 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-from data.data_panel import DataTablePanel, ColumnSelectionPanel
+from data.data_panel import DataTablePanel, DataDescribePanel, ColumnSelectionPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -101,7 +101,7 @@ class DFSplitterPanel(wx.Panel):
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
         topPanel.SetSizer(sizer)
 
-        self.data_describe = DataTablePanel(bottomPanel, -1, df=self.df.describe())
+        self.data_describe = DataDescribePanel(bottomPanel, -1, df=self.df)
         bottom_sizer = wx.BoxSizer()
         bottom_sizer.Add(self.data_describe, 1, wx.EXPAND | wx.SP_NOBORDER)
         bottomPanel.SetSizer(bottom_sizer)

@@ -223,6 +223,34 @@ class DataTablePanel(wx.Panel):
         self.grid.AutoSize()
 
 
+class DataDescribePanel(wx.Panel):
+    """
+    A panel specifically for displaying data frame descriptive statistics
+    """
+
+    def __init__(self, parent, id, df=None):
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+        self.grid = wx.grid.Grid(self)
+
+        self.parent = parent
+
+        # Set grid for displaying df.describe as table
+        self.df = df.describe()
+        table = DataTable(self.df)
+        self.grid.SetTable(table, takeOwnership=True)
+        self.grid.SetGridLineColour(GRID_LINE_COLOUR)
+
+        # Setup row/column size and alignment
+        self.grid.AutoSize()
+        self.grid.EnableDragGridSize(False)
+        self.grid.SetRowLabelSize(wx.grid.GRID_AUTOSIZE)
+        self.grid.SetDefaultCellAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND)
+        self.SetSizer(self.sizer)
+
+
 class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
     """
     A listCtrl object showing all the columns 
