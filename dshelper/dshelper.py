@@ -185,6 +185,13 @@ class MainFrame(wx.Frame):
         self.Show()
         self.Maximize(True)
 
+        pub.subscribe(self.update_column_stat, "UPDATE_DF")
+
+    def update_column_stat(self, df):
+        # update number of columns
+        cols = df.shape[1]
+        self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
+
 
 if __name__ == "__main__":
     app = wx.App()
