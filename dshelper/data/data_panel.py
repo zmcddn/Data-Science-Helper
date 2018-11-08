@@ -171,7 +171,7 @@ class DataTablePanel(wx.Panel):
         self.sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND)
         self.SetSizer(self.sizer)
 
-        # pub.subscribe(self.getResult, "analysisOrderCondition")
+        pub.subscribe(self._update_data, "UPDATE_DF")
 
     def OnColMove(self, evt):
         # Draging column
@@ -252,6 +252,7 @@ class ColumnSelectionPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
         self.df = df
+        self.enabled_column = list(self.df.columns)
 
         rows = []
         non_null_count = self.df.notnull().sum()
@@ -315,10 +316,19 @@ class ColumnSelectionPanel(wx.Panel):
         ).GetAsString(wx.C2S_HTML_SYNTAX)
         if background_color == "#D5F5E3":
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#FCF3CF")
+
+            # Update dataframe
+            self.enabled_column.remove(column_name)
+            _updated_df = self.df[self.enabled_column]
+            pub.sendMessage("UPDATE_DF", df=_updated_df)
+
+            # log action
             _log_message = "Column disabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
         else:
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
+
+            # log action
             _log_message = "Column enabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
