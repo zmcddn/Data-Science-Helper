@@ -308,16 +308,19 @@ class ColumnSelectionPanel(wx.Panel):
     def left_click(self, event):
         # Left click on the row to select or deselect a column
         item = event.GetItem()
+        column_name = item.GetText()
 
         background_color = self.column_list.GetItemBackgroundColour(
             event.GetIndex()
         ).GetAsString(wx.C2S_HTML_SYNTAX)
         if background_color == "#D5F5E3":
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#FCF3CF")
-            print("Item selected:", item.GetText())
+            _log_message = "Column disabled: {}".format(column_name)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
         else:
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
-            print("Item deselected:", item.GetText())
+            _log_message = "Column enabled: {}".format(column_name)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         self.column_list.Select(event.GetIndex(), on=0)  # De-select row
 
