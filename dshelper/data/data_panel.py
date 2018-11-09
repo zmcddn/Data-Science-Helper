@@ -280,6 +280,7 @@ class ColumnSelectionPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
         self.df = df
+        self.original_df = df.copy()
         self.enabled_column = list(self.df.columns)
 
         rows = []
@@ -355,6 +356,11 @@ class ColumnSelectionPanel(wx.Panel):
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
         else:
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
+
+            # Update dataframe
+            self.enabled_column.append(column_name)
+            _updated_df = self.original_df[self.enabled_column]
+            pub.sendMessage("UPDATE_DF", df=_updated_df)
 
             # log action
             _log_message = "Column enabled: {}".format(column_name)
