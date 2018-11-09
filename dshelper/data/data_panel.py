@@ -152,6 +152,7 @@ class DataTablePanel(wx.Panel):
 
         # Set grid for displaying dataframe as table
         self.df = df
+        self.original_df = df.copy()
         table = DataTable(self.df)
         self.grid.SetTable(table, takeOwnership=True)
         self.grid.SetGridLineColour(GRID_LINE_COLOUR)
@@ -221,6 +222,12 @@ class DataTablePanel(wx.Panel):
         self.grid.SetTable(table, takeOwnership=True)
         self.grid.Refresh()
         self.grid.AutoSize()
+
+        # Disable column re-ordering if some columns are hidden
+        if self.df.shape[1] < self.original_df.shape[1]:
+            self.grid.EnableDragColMove(False)
+        else:
+            self.grid.EnableDragColMove()
 
 
 class DataDescribePanel(wx.Panel):
