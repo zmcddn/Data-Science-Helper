@@ -37,6 +37,14 @@ def get_df():
 
     df = pd.read_csv("./titanic_data/train.csv")
 
+    # Insert some random dates into the df
+    random_dates = [
+        datetime.date(2016, 1, 1) + datetime.timedelta(days=int(days))
+        for days in np.random.randint(1, 50, df.shape[0])
+    ]
+    # Insert to df
+    df.insert(0, "Random Date", random_dates)
+
     return df
 
 
