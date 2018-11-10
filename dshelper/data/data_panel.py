@@ -290,20 +290,20 @@ class ColumnSelectionPanel(wx.Panel):
         self.original_df = df.copy()
         self.enabled_column = list(self.df.columns)
 
-        rows = []
-        non_null_count = self.df.notnull().sum()
-        null_count = self.df.isnull().sum()
-        non_null_percentage = non_null_count / self.df.shape[0]
-        for num, column_types in enumerate(self.df.dtypes):
-            rows.append(
-                (
-                    self.df.columns[num],
-                    str(column_types),
-                    str(non_null_count[num]),
-                    str(null_count[num]),
-                    "{:.2%}".format(non_null_percentage[num]),
-                )
-            )
+        # rows = []
+        # non_null_count = self.df.notnull().sum()
+        # null_count = self.df.isnull().sum()
+        # non_null_percentage = non_null_count / self.df.shape[0]
+        # for num, column_types in enumerate(self.df.dtypes):
+        #     rows.append(
+        #         (
+        #             self.df.columns[num],
+        #             str(column_types),
+        #             str(non_null_count[num]),
+        #             str(null_count[num]),
+        #             "{:.2%}".format(non_null_percentage[num]),
+        #         )
+        #     )
 
         self.column_list = ColumnSelectionList(self)
 
@@ -313,28 +313,29 @@ class ColumnSelectionPanel(wx.Panel):
         self.column_list.InsertColumn(3, "Null")
         self.column_list.InsertColumn(4, "Non Null Percentage")
 
-        idx = 0
-        for row in rows:
-            if int(wx.__version__[0]) < 4:
-                # wxpython 3 compatibility
-                index = self.column_list.InsertStringItem(idx, row[0])
-                self.column_list.SetStringItem(index, 1, row[1])
-                self.column_list.SetStringItem(index, 2, row[2])
-                self.column_list.SetStringItem(index, 3, row[3])
-                self.column_list.SetStringItem(index, 4, row[4])
-            else:
-                # wxpython 4 way
-                index = self.column_list.InsertItem(idx, row[0])
-                self.column_list.SetItem(index, 1, row[1])
-                self.column_list.SetItem(index, 2, row[2])
-                self.column_list.SetItem(index, 3, row[3])
-                self.column_list.SetItem(index, 4, row[4])
-            idx += 1
+        # idx = 0
+        # for row in rows:
+        #     if int(wx.__version__[0]) < 4:
+        #         # wxpython 3 compatibility
+        #         index = self.column_list.InsertStringItem(idx, row[0])
+        #         self.column_list.SetStringItem(index, 1, row[1])
+        #         self.column_list.SetStringItem(index, 2, row[2])
+        #         self.column_list.SetStringItem(index, 3, row[3])
+        #         self.column_list.SetStringItem(index, 4, row[4])
+        #     else:
+        #         # wxpython 4 way
+        #         index = self.column_list.InsertItem(idx, row[0])
+        #         self.column_list.SetItem(index, 1, row[1])
+        #         self.column_list.SetItem(index, 2, row[2])
+        #         self.column_list.SetItem(index, 3, row[3])
+        #         self.column_list.SetItem(index, 4, row[4])
+        #     idx += 1
 
-        # Set the background color of the table
-        row_num = self.column_list.GetItemCount()
-        for index in range(row_num):
-            self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
+        # # Set the background color of the table
+        # row_num = self.column_list.GetItemCount()
+        # for index in range(row_num):
+        #     self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
+        self._update_column(self.enabled_column)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.column_list, 1, wx.ALL | wx.EXPAND)
@@ -374,6 +375,50 @@ class ColumnSelectionPanel(wx.Panel):
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         self.column_list.Select(event.GetIndex(), on=0)  # De-select row
+
+    def _update_column(self, columns):
+        if len(columns) == self.original_df.shape[1]:
+            # case for re-arrangement without hidden columns
+            rows = []
+            non_null_count = self.df.notnull().sum()
+            null_count = self.df.isnull().sum()
+            non_null_percentage = non_null_count / self.df.shape[0]
+            for num, column_types in enumerate(self.df.dtypes):
+                rows.append(
+                    (
+                        self.df.columns[num],
+                        str(column_types),
+                        str(non_null_count[num]),
+                        str(null_count[num]),
+                        "{:.2%}".format(non_null_percentage[num]),
+                    )
+                )
+
+            idx = 0
+            for row in rows:
+                if int(wx.__version__[0]) < 4:
+                    # wxpython 3 compatibility
+                    index = self.column_list.InsertStringItem(idx, row[0])
+                    self.column_list.SetStringItem(index, 1, row[1])
+                    self.column_list.SetStringItem(index, 2, row[2])
+                    self.column_list.SetStringItem(index, 3, row[3])
+                    self.column_list.SetStringItem(index, 4, row[4])
+                else:
+                    # wxpython 4 way
+                    index = self.column_list.InsertItem(idx, row[0])
+                    self.column_list.SetItem(index, 1, row[1])
+                    self.column_list.SetItem(index, 2, row[2])
+                    self.column_list.SetItem(index, 3, row[3])
+                    self.column_list.SetItem(index, 4, row[4])
+                idx += 1
+
+            # Set the background color of the table
+            row_num = self.column_list.GetItemCount()
+            for index in range(row_num):
+                self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
+        else:
+            # case for re-arrangement with hidden columns
+            pass
 
 
 if __name__ == "__main__":
