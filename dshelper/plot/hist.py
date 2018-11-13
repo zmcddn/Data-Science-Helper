@@ -5,9 +5,10 @@ import numpy as np
 from numpy import arange, sin, pi
 
 import matplotlib
+
 # import seaborn as sns
 
-matplotlib.use('WXAgg')
+matplotlib.use("WXAgg")
 
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
