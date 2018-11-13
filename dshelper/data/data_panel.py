@@ -392,11 +392,11 @@ class ColumnSelectionPanel(wx.Panel):
         if columns == self.original_df.shape[1]:
             # case for re-arrangement without hidden columns
 
-            # Delete from old position
-            self.column_list.DeleteItem(old_position)
-
             # Add to new position
             if old_position != new_position:
+                # Delete from old position
+                self.column_list.DeleteItem(old_position)
+                
                 if old_position < new_position:
                     idx = new_position - 1
                 elif old_position > new_position:
