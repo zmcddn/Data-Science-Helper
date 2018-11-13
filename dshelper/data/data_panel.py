@@ -198,28 +198,29 @@ class DataTablePanel(wx.Panel):
         # otherwise selecting the datafrom will skip columns
         self.grid.SetColPos(colId, oldPos)
 
-        # Get column position
-        if newPos > oldPos:
-            # Drag rightward
-            cols.insert(newPos, cols[oldPos])
-            cols.pop(oldPos)
-        else:
-            # Drag leftward
-            cols.insert(newPos, cols[oldPos])
-            cols.pop(oldPos + 1)
+        if newPos != oldPos:
+            # Get column position
+            if newPos > oldPos:
+                # Drag rightward
+                cols.insert(newPos, cols[oldPos])
+                cols.pop(oldPos)
+            else:
+                # Drag leftward
+                cols.insert(newPos, cols[oldPos])
+                cols.pop(oldPos + 1)
 
-        # Reset the df with new column position
-        df = self.df.reindex(columns=cols)
+            # Reset the df with new column position
+            df = self.df.reindex(columns=cols)
 
-        pub.sendMessage(
-            "UPDATE_COLUMNS",
-            columns=df.shape[1],
-            old_position=oldPos,
-            new_position=newPos,
-        )
+            pub.sendMessage(
+                "UPDATE_COLUMNS",
+                columns=df.shape[1],
+                old_position=oldPos,
+                new_position=newPos,
+            )
 
-        # Update df for display
-        self._update_data(df)
+            # Update df for display
+            self._update_data(df)
 
     def _update_data(self, df):
         # Update the dataframe for display
@@ -396,7 +397,7 @@ class ColumnSelectionPanel(wx.Panel):
             if old_position != new_position:
                 # Delete from old position
                 self.column_list.DeleteItem(old_position)
-                
+
                 if old_position < new_position:
                     idx = new_position - 1
                 elif old_position > new_position:
