@@ -295,7 +295,8 @@ class ColumnSelectionPanel(wx.Panel):
 
         self.df = df
         self.original_df = df.copy()
-        self.enabled_column = list(self.df.columns)
+        self.enabled_columns = list(self.df.columns)
+        self.original_columns = list(self.df.columns)
 
         rows = []
         non_null_count = self.df.notnull().sum()
@@ -344,7 +345,6 @@ class ColumnSelectionPanel(wx.Panel):
         row_num = self.column_list.GetItemCount()
         for index in range(row_num):
             self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
-        # self._update_column(self.enabled_column)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.column_list, 1, wx.ALL | wx.EXPAND)
@@ -366,8 +366,8 @@ class ColumnSelectionPanel(wx.Panel):
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#FCF3CF")
 
             # Update dataframe
-            self.enabled_column.remove(column_name)
-            _updated_df = self.df[self.enabled_column]
+            self.enabled_columns.remove(column_name)
+            _updated_df = self.df[self.enabled_columns]
             pub.sendMessage("UPDATE_DF", df=_updated_df)
 
             # log action
@@ -377,8 +377,9 @@ class ColumnSelectionPanel(wx.Panel):
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
 
             # Update dataframe
-            self.enabled_column.append(column_name)
-            _updated_df = self.original_df[self.enabled_column]
+            column_index = self.original_columns.index(column_name)
+            self.enabled_columns.insert(column_index, column_name)
+            _updated_df = self.original_df[self.enabled_columns]
             pub.sendMessage("UPDATE_DF", df=_updated_df)
 
             # log action
@@ -424,14 +425,24 @@ class ColumnSelectionPanel(wx.Panel):
                 moved_row = self.rows.pop(old_position)
                 self.rows.insert(idx, moved_row)
 
-                self.original_df = self.original_df[self.enabled_column]
+                # Update df columns info
+                moved_column = self.enabled_columns.pop(old_position)
+                self.enabled_columns.insert(idx, moved_column)
+
+                # Update original columns info
+                moved_column = self.original_columns.pop(old_position)
+                self.original_columns.insert(idx, moved_column)
+
+                # Update df
+                self.df = self.df[self.enabled_columns]
+        else:
+            # case for re-arrangement with hidden columns
 
             # # Set the background color of the table
             # row_num = self.column_list.GetItemCount()
             # for index in range(row_num):
             #     self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
-        else:
-            # case for re-arrangement with hidden columns
+
             pass
 
 
