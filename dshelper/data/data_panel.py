@@ -202,6 +202,7 @@ class DataTablePanel(wx.Panel):
             # Get column position
             if newPos > oldPos:
                 # Drag rightward
+                newPos += 1
                 cols.insert(newPos, cols[oldPos])
                 cols.pop(oldPos)
             else:
