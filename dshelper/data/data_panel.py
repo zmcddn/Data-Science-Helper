@@ -379,8 +379,12 @@ class ColumnSelectionPanel(wx.Panel):
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
 
             # Update dataframe
-            column_index = self.original_columns.index(column_name)
-            self.enabled_columns.insert(column_index, column_name)
+            # column_index = self.original_columns.index(column_name)
+            column_index, index_found = self.get_insert_index(column_name)
+            if index_found:
+                self.enabled_columns.insert(column_index, column_name)
+            else:
+                self.enabled_columns.append(column_name)
             _updated_df = self.original_df[self.enabled_columns]
             pub.sendMessage("UPDATE_DF", df=_updated_df)
 
@@ -389,6 +393,37 @@ class ColumnSelectionPanel(wx.Panel):
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         self.column_list.Select(event.GetIndex(), on=0)  # De-select row
+
+    def get_insert_index(self, column_name):
+        # get the index for insertion for any given column name
+        _column_index = self.original_columns.index(column_name)
+        index_found = False
+        if _column_index == 0:
+            # case for the beginning position
+            column_index = _column_index
+            index_found = True
+        elif _column_index == len(self.original_columns) - 1:
+            # case for the ending position
+            column_index = _column_index
+            index_found = True
+        else:
+            # Always search from the leftward
+            while _column_index > 0:
+                _column_index -= 1
+                previous_column = self.original_columns[_column_index]
+                # print("c-column:",column_name, "index:", _column_index, "p-column:", previous_column)
+                if previous_column in self.enabled_columns:
+                    column_index = self.enabled_columns.index(previous_column) + 1
+                    index_found = True
+                    # print("inser index:", column_index)
+                    break
+
+            if not index_found:
+                # case when all the left columns are hidden
+                column_index = 0
+                index_found = True
+
+        return column_index, index_found
 
     def _update_column(self, columns, old_position, new_position):
         if columns == self.original_df.shape[1]:
