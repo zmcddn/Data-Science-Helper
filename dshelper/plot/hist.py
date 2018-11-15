@@ -59,7 +59,7 @@ class HistPanel(wx.Panel):
         self.axes.clear()
 
         # Draw plot
-        self.axes.hist(data, bins=100)
+        self.axes.hist(data.dropna(), bins=100)
         self.axes.set_title("Histogram Plot for %s" % column_name)
         self.axes.set_ylabel("Value Count")
         self.canvas.draw()
