@@ -17,7 +17,12 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-from data.data_panel import DataTablePanel, DataDescribePanel, ColumnSelectionPanel
+from data.data_panel import (
+    DataTablePanel, 
+    DataDescribePanel, 
+    ColumnSelectionPanel,
+    )
+from plot.plot_panel import PlotPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -96,7 +101,7 @@ class DFSplitterPanel(wx.Panel):
         # each page serves a different function
         data_notebook = wx.Notebook(topPanel)
         self.raw_data_page = DataTablePanel(data_notebook, -1, df=self.df)
-        self.plot_page = wx.Panel(data_notebook)
+        self.plot_page = PlotPanel(data_notebook, df=self.df)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
 
