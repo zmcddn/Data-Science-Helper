@@ -17,11 +17,7 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-from data.data_panel import (
-    DataTablePanel, 
-    DataDescribePanel, 
-    ColumnSelectionPanel,
-    )
+from data.data_panel import DataTablePanel, DataDescribePanel, ColumnSelectionPanel
 from plot.plot_panel import PlotPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"

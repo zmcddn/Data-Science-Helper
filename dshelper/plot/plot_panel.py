@@ -32,7 +32,7 @@ class PlotPanel(wx.Panel):
         # Create a notebook to display different kind of plot in different tabs
         plot_notebook = wx.Notebook(self)
         plot_notebook.SetBackgroundColour("WHITE")
-        self.hist_page = wx.Panel(plot_notebook)
+        self.hist_page = HistPanel(plot_notebook, df=self.df)
         self.heat_page = wx.Panel(plot_notebook)
         self.scatter_page = wx.Panel(plot_notebook)
         self.boxplot_page = wx.Panel(plot_notebook)
