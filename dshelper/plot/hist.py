@@ -7,10 +7,13 @@ from numpy import arange, sin, pi
 from wx.lib.pubsub import pub
 
 import matplotlib
-
-# import seaborn as sns
-
 matplotlib.use("WXAgg")
+
+try:
+    import seaborn
+    seaborn.set()
+except ImportError:
+    pass
 
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
