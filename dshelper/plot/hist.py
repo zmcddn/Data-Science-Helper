@@ -58,8 +58,15 @@ class HistPanel(wx.Panel):
         # Reset plot forst
         self.axes.clear()
 
-        # Draw plot
-        self.axes.hist(data.dropna(), bins=100)
+        # Check data type
+        if data.dtype == "object":
+            # Different drawing method for strings
+            value_count = data.value_counts().sort_index()
+            value_count.plot(kind='bar', ax=self.axes)
+        else:
+            self.axes.hist(data.dropna(), bins=100)
+
+        # Set plot info
         self.axes.set_title("Histogram Plot for %s" % column_name)
         self.axes.set_ylabel("Value Count")
         self.canvas.draw()
