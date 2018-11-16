@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 dshelper is a GUI for visualization of pandas dataframes. 
-In addition, it provides some functionalities in helping with some exploratory analysis and examination of raw data
+In addition, it provides some functionalities in helping with some exploratory 
+analysis and examination of raw data
 
 Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
@@ -375,6 +376,11 @@ class ColumnSelectionPanel(wx.Panel):
             # log action
             _log_message = "Column disabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
+
+            # Update displayed columns
+            pub.sendMessage(
+                "UPDATE_DISPLAYED_COLUMNS", available_columns=self.enabled_columns
+            )
         else:
             self.column_list.SetItemBackgroundColour(event.GetIndex(), "#D5F5E3")
 
@@ -391,6 +397,11 @@ class ColumnSelectionPanel(wx.Panel):
             # log action
             _log_message = "Column enabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
+
+            # Update displayed columns
+            pub.sendMessage(
+                "UPDATE_DISPLAYED_COLUMNS", available_columns=self.enabled_columns
+            )
 
         self.column_list.Select(event.GetIndex(), on=0)  # De-select row
 

@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
+from wx.lib.pubsub import pub
+
 import matplotlib
 
 # import seaborn as sns
@@ -48,6 +50,8 @@ class HistPanel(wx.Panel):
         self.SetSizer(sizer)
         self.Fit()
 
+        pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
+
     def column_selected(self, event):
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
         selcted_column = self.available_columns[selected_column_id]
@@ -62,7 +66,7 @@ class HistPanel(wx.Panel):
         if data.dtype == "object":
             # Different drawing method for strings
             value_count = data.value_counts().sort_index()
-            value_count.plot(kind='bar', ax=self.axes)
+            value_count.plot(kind="bar", ax=self.axes)
         else:
             self.axes.hist(data.dropna(), bins=100)
 
@@ -70,6 +74,12 @@ class HistPanel(wx.Panel):
         self.axes.set_title("Histogram Plot for %s" % column_name)
         self.axes.set_ylabel("Value Count")
         self.canvas.draw()
+
+    def update_available_column(self, available_columns):
+        self.available_columns = available_columns
+        self.dropdown_menu.Clear()
+        for column in self.available_columns:
+            self.dropdown_menu.Append(column)
 
 
 if __name__ == "__main__":
