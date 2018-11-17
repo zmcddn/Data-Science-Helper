@@ -10,8 +10,8 @@ import matplotlib
 matplotlib.use("WXAgg")
 
 try:
-    import seaborn
-    seaborn.set()
+    import seaborn as sns
+    sns.set()
 except ImportError:
     pass
 
@@ -46,10 +46,17 @@ class HeatPanel(wx.Panel):
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
+        # Create a button to display/hide correlation map
+        self.correlation_button = wx.ToggleButton(self, label="Display Correlation Map")
+        self.correlation_button.SetForegroundColour("blue")
+        self.correlation_button.SetBackgroundColour("#D5F5E3")
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.correlation_heatmap)
+
         toolbar_sizer = wx.BoxSizer(wx.HORIZONTAL)
         toolbar_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         toolbar_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        toolbar_sizer.Add(self.toolbar, 0, wx.ALL, 5)
+        toolbar_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        toolbar_sizer.Add(self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
@@ -81,6 +88,8 @@ class HeatPanel(wx.Panel):
         # else:
         self.axes.hist2d(data1.dropna(), data2.dropna())
 
+        # sns.kdeplot(data1, data2, ax=self.axes, bw=10, kernel='gau', shade=True)
+
         # Set plot info
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
         # self.axes.set_ylabel("Value Count")
@@ -93,3 +102,33 @@ class HeatPanel(wx.Panel):
         for column in self.available_columns:
             self.column1.Append(column)
             self.column2.Append(column)
+
+    def correlation_heatmap(self, event):
+        if self.correlation_button.GetValue() == True:
+            # Button Triggered
+            self.correlation_button.SetLabel('Hide Correlation Map')
+            self.correlation_button.SetForegroundColour("orange")
+
+            # Plot correlation heatmap
+            self.axes.clear()
+            df = self.df[self.available_columns]
+            colormap = sns.diverging_palette(220, 10, as_cmap = True)
+            
+            _ = sns.heatmap(
+                df.corr(), 
+                cmap = colormap,
+                square=True, 
+                cbar_kws={'shrink':.9 }, 
+                ax=self.axes,
+                annot=True, 
+                linewidths=0.1,vmax=1.0, linecolor='white',
+                annot_kws={'fontsize':12 }
+            )
+            self.canvas.draw()
+            
+        if self.correlation_button.GetValue() == False:
+            # Button Triggered
+            self.correlation_button.SetLabel('Display Correlation Map')
+            self.correlation_button.SetForegroundColour("blue")
+            self.axes.clear()
+            self.canvas.draw()
