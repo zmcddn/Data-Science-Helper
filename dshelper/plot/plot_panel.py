@@ -16,6 +16,7 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx
 from matplotlib.figure import Figure
 
 from .hist import HistPanel
+from .heat import HeatPanel
 
 
 class PlotPanel(wx.Panel):
@@ -33,7 +34,7 @@ class PlotPanel(wx.Panel):
         plot_notebook = wx.Notebook(self)
         plot_notebook.SetBackgroundColour("WHITE")
         self.hist_page = HistPanel(plot_notebook, df=self.df)
-        self.heat_page = wx.Panel(plot_notebook)
+        self.heat_page = HeatPanel(plot_notebook, df=self.df)
         self.scatter_page = wx.Panel(plot_notebook)
         self.boxplot_page = wx.Panel(plot_notebook)
         self.violin_page = wx.Panel(plot_notebook)
