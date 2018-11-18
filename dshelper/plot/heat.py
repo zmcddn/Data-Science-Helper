@@ -56,7 +56,9 @@ class HeatPanel(wx.Panel):
         toolbar_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         toolbar_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         toolbar_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        toolbar_sizer.Add(self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2)
+        toolbar_sizer.Add(
+            self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2
+        )
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
@@ -73,8 +75,13 @@ class HeatPanel(wx.Panel):
         selected_column_id_2 = self.column2.GetCurrentSelection()
         selcted_column_2 = self.available_columns[selected_column_id_2]
 
-        if selcted_column_1 and selcted_column_2:
-            self.draw_heat(selcted_column_1, selcted_column_2, self.df[selcted_column_1], self.df[selcted_column_2])
+        if selected_column_id_1 > 0 and selected_column_id_2 > 0:
+            self.draw_heat(
+                selcted_column_1,
+                selcted_column_2,
+                self.df[selcted_column_1],
+                self.df[selcted_column_2],
+            )
 
     def draw_heat(self, column1, column2, data1, data2):
         # Reset plot first
@@ -87,8 +94,6 @@ class HeatPanel(wx.Panel):
         #     value_count.plot(kind="bar", ax=self.axes)
         # else:
         self.axes.hist2d(data1.dropna(), data2.dropna())
-
-        # sns.kdeplot(data1, data2, ax=self.axes, bw=10, kernel='gau', shade=True)
 
         # Set plot info
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
@@ -106,31 +111,34 @@ class HeatPanel(wx.Panel):
     def correlation_heatmap(self, event):
         if self.correlation_button.GetValue() == True:
             # Button Triggered
-            self.correlation_button.SetLabel('Hide Correlation Map')
+            self.correlation_button.SetLabel("Hide Correlation Map")
             self.correlation_button.SetForegroundColour("orange")
 
             # Plot correlation heatmap
             self.axes.clear()
             df = self.df[self.available_columns]
-            colormap = sns.diverging_palette(220, 10, as_cmap = True)
-            
+            colormap = sns.diverging_palette(220, 10, as_cmap=True)
+
             _ = sns.heatmap(
-                df.corr(), 
-                cmap = colormap,
-                square=True, 
-                cbar_kws={'shrink':.9 }, 
+                df.corr(),
+                cmap=colormap,
+                square=True,
+                cbar_kws={"shrink": 0.9},
                 ax=self.axes,
-                annot=True, 
-                linewidths=0.1,vmax=1.0, linecolor='white',
-                annot_kws={'fontsize':12 }
+                annot=True,
+                linewidths=0.1,
+                vmax=1.0,
+                linecolor="white",
+                annot_kws={"fontsize": 12},
             )
             self.canvas.draw()
-            
+
         if self.correlation_button.GetValue() == False:
             # Button Triggered
-            self.correlation_button.SetLabel('Display Correlation Map')
+            self.correlation_button.SetLabel("Display Correlation Map")
             self.correlation_button.SetForegroundColour("blue")
             self.axes.clear()
             self.canvas.draw()
             self.figure.clear()
             self.axes = self.figure.add_subplot(111)
+            self.column_selected(event=None) # Resume to previous heat map plot
