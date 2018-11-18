@@ -132,3 +132,5 @@ class HeatPanel(wx.Panel):
             self.correlation_button.SetForegroundColour("blue")
             self.axes.clear()
             self.canvas.draw()
+            self.figure.clear()
+            self.axes = self.figure.add_subplot(111)
