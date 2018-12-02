@@ -19,6 +19,7 @@ except ImportError:
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
+import matplotlib.cm as cm
 
 
 class HeatPanel(wx.Panel):
@@ -93,11 +94,28 @@ class HeatPanel(wx.Panel):
         #     value_count = data.value_counts().sort_index()
         #     value_count.plot(kind="bar", ax=self.axes)
         # else:
-        self.axes.hist2d(data1.dropna(), data2.dropna())
+
+        self.axes.hist2d(data1.fillna(0), data2.fillna(0), normed=True, cmap=cm.coolwarm)
+
+        # colormap = sns.diverging_palette(220, 10, as_cmap=True)
+        # self.axes.imshow(self.df[[column1, column2]], cmap='hot', interpolation='nearest')
+        
+        # import matplotlib.patches as patches
+        # self.axes.pcolormesh(
+        #     self.df[[column1, column2]], 
+        #     cmap=cm.coolwarm, 
+        #     edgecolors='white', 
+        #     linewidths=1,
+        #     antialiased=True
+        # )
+        self.axes.patch.set(hatch='xx', edgecolor='black')
+
+        # sns.heatmap(data1.fillna(np.nan), data2.fillna(np.nan), ax=self.axes)
 
         # Set plot info
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
-        # self.axes.set_ylabel("Value Count")
+        self.axes.set_ylabel(column2)
+        self.axes.set_xlabel(column1)
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
