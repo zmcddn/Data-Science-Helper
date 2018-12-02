@@ -36,6 +36,7 @@ class HeatPanel(wx.Panel):
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
         self.canvas = FigureCanvas(self, -1, self.figure)
+        self.color_bar = None
 
         self.toolbar = NavigationToolbar(self.canvas)
 
@@ -88,6 +89,9 @@ class HeatPanel(wx.Panel):
         # Reset plot first
         self.axes.clear()
 
+        if self.color_bar:
+            self.color_bar.remove()
+
         # # Check data type
         # if data.dtype == "object":
         #     # Different drawing method for strings
@@ -95,7 +99,7 @@ class HeatPanel(wx.Panel):
         #     value_count.plot(kind="bar", ax=self.axes)
         # else:
 
-        self.axes.hist2d(data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1)
+        heatmap = self.axes.hist2d(data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1)
         
         # # Adds cross marks for null values
         # self.axes.patch.set(hatch='xx', edgecolor='black') 
@@ -109,6 +113,7 @@ class HeatPanel(wx.Panel):
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
         self.axes.set_ylabel(column2)
         self.axes.set_xlabel(column1)
+        self.color_bar = self.figure.colorbar(heatmap[3], ax=self.axes)
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
@@ -124,6 +129,9 @@ class HeatPanel(wx.Panel):
             # Button Triggered
             self.correlation_button.SetLabel("Hide Correlation Map")
             self.correlation_button.SetForegroundColour("orange")
+
+            if self.color_bar:
+                self.color_bar.remove()
 
             # Plot correlation heatmap
             self.axes.clear()
