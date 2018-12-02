@@ -95,22 +95,15 @@ class HeatPanel(wx.Panel):
         #     value_count.plot(kind="bar", ax=self.axes)
         # else:
 
-        self.axes.hist2d(data1.fillna(0), data2.fillna(0), normed=True, cmap=cm.coolwarm)
-
-        # colormap = sns.diverging_palette(220, 10, as_cmap=True)
-        # self.axes.imshow(self.df[[column1, column2]], cmap='hot', interpolation='nearest')
+        self.axes.hist2d(data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1)
         
-        # import matplotlib.patches as patches
-        # self.axes.pcolormesh(
-        #     self.df[[column1, column2]], 
-        #     cmap=cm.coolwarm, 
-        #     edgecolors='white', 
-        #     linewidths=1,
-        #     antialiased=True
-        # )
-        self.axes.patch.set(hatch='xx', edgecolor='black')
+        # # Adds cross marks for null values
+        # self.axes.patch.set(hatch='xx', edgecolor='black') 
 
-        # sns.heatmap(data1.fillna(np.nan), data2.fillna(np.nan), ax=self.axes)
+        # To-do: plot using seaborn
+        # colormap = sns.diverging_palette(220, 10, as_cmap=True)
+        # df = self.df.pivot(column1, column2)
+        # sns.heatmap(df, ax=self.axes, cmap=colormap)
 
         # Set plot info
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
