@@ -33,38 +33,53 @@ class HeatPanel(wx.Panel):
         self.df = df
         self.available_columns = list(self.df.columns)
 
+        self.splitter = wx.SplitterWindow(self, wx.ID_ANY)
+        self.heatmap_panel = wx.Panel(self.splitter,1)
+        self.correlation_panel = wx.Panel(self.splitter,1)
+        self.splitter.SplitVertically(self.heatmap_panel, self.correlation_panel)
+        self.splitter.SetSashGravity(0.5)  # Set proportion for the splitter window
+        self.splitter.Unsplit(self.correlation_panel) # Hide when first load
+
+        self.buttonpanel = wx.Panel(self, 1)
+        self.buttonpanel.SetBackgroundColour('white')
+
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
-        self.canvas = FigureCanvas(self, -1, self.figure)
+        self.canvas = FigureCanvas(self.heatmap_panel, -1, self.figure)
         self.color_bar = None
 
         self.toolbar = NavigationToolbar(self.canvas)
 
         self.column1 = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
         self.column2 = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
         # Create a button to display/hide correlation map
-        self.correlation_button = wx.ToggleButton(self, label="Display Correlation Map")
+        self.correlation_button = wx.ToggleButton(self.buttonpanel, label="Display Correlation Map")
         self.correlation_button.SetForegroundColour("blue")
         self.correlation_button.SetBackgroundColour("#D5F5E3")
         self.Bind(wx.EVT_TOGGLEBUTTON, self.correlation_heatmap)
 
+        canvas_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        canvas_sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
+        self.heatmap_panel.SetSizer(canvas_sizer)
+
         toolbar_sizer = wx.BoxSizer(wx.HORIZONTAL)
         toolbar_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         toolbar_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        toolbar_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        # toolbar_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         toolbar_sizer.Add(
             self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2
         )
+        self.buttonpanel.SetSizer(toolbar_sizer)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
-        sizer.Add(toolbar_sizer)
+        sizer.Add(self.splitter, 1, wx.EXPAND | wx.ALL)
+        sizer.Add(self.buttonpanel)
         self.SetSizer(sizer)
         self.Fit()
 
@@ -160,4 +175,7 @@ class HeatPanel(wx.Panel):
             self.canvas.draw()
             self.figure.clear()
             self.axes = self.figure.add_subplot(111)
-            self.column_selected(event=None) # Resume to previous heat map plot
+
+            event = wx.PyCommandEvent(wx.wxEVT_COMMAND_COMBOBOX_SELECTED)
+            wx.PostEvent(self.EVT_COMBOBOX, event)
+            # self.column_selected(event=None) # Resume to previous heat map plot
