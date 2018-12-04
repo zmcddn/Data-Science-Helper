@@ -58,6 +58,8 @@ class HeatPanel(wx.Panel):
         self.has_correlation_plot = False  # Flag for correlation plot
 
         # Drop-down select boxes
+        self.text_y_axis = wx.StaticText(self.buttonpanel, label='Y Axis:')
+        self.text_x_axis = wx.StaticText(self.buttonpanel, label='X Axis:')
         self.column1 = wx.ComboBox(
             self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
@@ -88,7 +90,9 @@ class HeatPanel(wx.Panel):
 
         # Bottom button bar layout
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        button_sizer.Add(self.text_x_axis, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.text_y_axis, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(
             self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2
