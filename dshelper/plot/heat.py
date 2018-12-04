@@ -34,22 +34,30 @@ class HeatPanel(wx.Panel):
         self.available_columns = list(self.df.columns)
 
         self.splitter = wx.SplitterWindow(self, wx.ID_ANY)
-        self.heatmap_panel = wx.Panel(self.splitter,1)
-        self.correlation_panel = wx.Panel(self.splitter,1)
+        self.heatmap_panel = wx.Panel(self.splitter, 1)
+        self.correlation_panel = wx.Panel(self.splitter, 1)
         self.splitter.SplitVertically(self.heatmap_panel, self.correlation_panel)
         self.splitter.SetSashGravity(0.5)  # Set proportion for the splitter window
-        self.splitter.Unsplit(self.correlation_panel) # Hide when first load
+        self.splitter.Unsplit(self.correlation_panel)  # Hide when first load
 
-        self.buttonpanel = wx.Panel(self, 1)
-        self.buttonpanel.SetBackgroundColour('white')
+        self.buttonpanel = wx.Panel(self, 1)  # Panel contains all the buttons
+        self.buttonpanel.SetBackgroundColour("white")
 
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
         self.canvas = FigureCanvas(self.heatmap_panel, -1, self.figure)
-        self.color_bar = None
-
+        self.color_bar = None  # Flag for color bar
         self.toolbar = NavigationToolbar(self.canvas)
 
+        self.correlation_figure = Figure()
+        self.correlation_axes = self.correlation_figure.add_subplot(111)
+        self.correlation_canvas = FigureCanvas(
+            self.correlation_panel, -1, self.correlation_figure
+        )
+        self.correlation_toolbar = NavigationToolbar(self.correlation_canvas)
+        self.has_correlation_plot = False  # Flag for correlation plot
+
+        # Drop-down select boxes
         self.column1 = wx.ComboBox(
             self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
@@ -59,24 +67,35 @@ class HeatPanel(wx.Panel):
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
         # Create a button to display/hide correlation map
-        self.correlation_button = wx.ToggleButton(self.buttonpanel, label="Display Correlation Map")
+        self.correlation_button = wx.ToggleButton(
+            self.buttonpanel, label="Display Correlation Map"
+        )
         self.correlation_button.SetForegroundColour("blue")
         self.correlation_button.SetBackgroundColour("#D5F5E3")
         self.Bind(wx.EVT_TOGGLEBUTTON, self.correlation_heatmap)
 
-        canvas_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Heatmap layout
+        canvas_sizer = wx.BoxSizer(wx.VERTICAL)
         canvas_sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
+        canvas_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.heatmap_panel.SetSizer(canvas_sizer)
 
-        toolbar_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        toolbar_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        toolbar_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        # toolbar_sizer.Add(self.toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        toolbar_sizer.Add(
+        # Correlation layout
+        correlation_sizer = wx.BoxSizer(wx.VERTICAL)
+        correlation_sizer.Add(self.correlation_canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
+        correlation_sizer.Add(self.correlation_toolbar, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        self.correlation_panel.SetSizer(correlation_sizer)
+
+        # Bottom button bar layout
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        button_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(
             self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2
         )
-        self.buttonpanel.SetSizer(toolbar_sizer)
+        self.buttonpanel.SetSizer(button_sizer)
 
+        # Main panel layout
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.splitter, 1, wx.EXPAND | wx.ALL)
         sizer.Add(self.buttonpanel)
@@ -114,10 +133,12 @@ class HeatPanel(wx.Panel):
         #     value_count.plot(kind="bar", ax=self.axes)
         # else:
 
-        heatmap = self.axes.hist2d(data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1)
-        
+        heatmap = self.axes.hist2d(
+            data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1
+        )
+
         # # Adds cross marks for null values
-        # self.axes.patch.set(hatch='xx', edgecolor='black') 
+        # self.axes.patch.set(hatch='xx', edgecolor='black')
 
         # To-do: plot using seaborn
         # colormap = sns.diverging_palette(220, 10, as_cmap=True)
@@ -141,41 +162,34 @@ class HeatPanel(wx.Panel):
 
     def correlation_heatmap(self, event):
         if self.correlation_button.GetValue() == True:
-            # Button Triggered
+            # Show correlation plot
+            self.splitter.SplitVertically(self.heatmap_panel, self.correlation_panel)
             self.correlation_button.SetLabel("Hide Correlation Map")
             self.correlation_button.SetForegroundColour("orange")
 
-            if self.color_bar:
-                self.color_bar.remove()
+            if not self.has_correlation_plot:
+                # Plot correlation heatmap
+                self.correlation_axes.clear()
+                df = self.df[self.available_columns]
+                colormap = sns.diverging_palette(220, 10, as_cmap=True)
 
-            # Plot correlation heatmap
-            self.axes.clear()
-            df = self.df[self.available_columns]
-            colormap = sns.diverging_palette(220, 10, as_cmap=True)
-
-            _ = sns.heatmap(
-                df.corr(),
-                cmap=colormap,
-                square=True,
-                cbar_kws={"shrink": 0.9},
-                ax=self.axes,
-                annot=True,
-                linewidths=0.1,
-                vmax=1.0,
-                linecolor="white",
-                annot_kws={"fontsize": 12},
-            )
-            self.canvas.draw()
+                _ = sns.heatmap(
+                    df.corr(),
+                    cmap=colormap,
+                    square=True,
+                    cbar_kws={"shrink": 0.9},
+                    ax=self.correlation_axes,
+                    annot=True,
+                    linewidths=0.1,
+                    vmax=1.0,
+                    linecolor="white",
+                    annot_kws={"fontsize": 12},
+                )
+                self.canvas.draw()
+                self.has_correlation_plot = True
 
         if self.correlation_button.GetValue() == False:
-            # Button Triggered
+            # Hide correlation plot
+            self.splitter.Unsplit(self.correlation_panel)
             self.correlation_button.SetLabel("Display Correlation Map")
             self.correlation_button.SetForegroundColour("blue")
-            self.axes.clear()
-            self.canvas.draw()
-            self.figure.clear()
-            self.axes = self.figure.add_subplot(111)
-
-            event = wx.PyCommandEvent(wx.wxEVT_COMMAND_COMBOBOX_SELECTED)
-            wx.PostEvent(self.EVT_COMBOBOX, event)
-            # self.column_selected(event=None) # Resume to previous heat map plot
