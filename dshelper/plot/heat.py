@@ -175,11 +175,22 @@ class HeatPanel(wx.Panel):
         # df = self.df.pivot(column1, column2)
         # sns.heatmap(df, ax=self.axes, cmap=colormap)
 
-        # Set plot info
+        hist, xbins, ybins, im = heatmap[0], heatmap[1], heatmap[2], heatmap[3]
+        for i in range(len(ybins)-1):
+            for j in range(len(xbins)-1):
+                # print(hist[i,j], type(hist[i,j]), np.isnan(hist[i,j]))
+                if not np.isnan(hist[i,j]):
+                    self.axes.text(xbins[j]+0.5,ybins[i]+0.5, hist[i,j], 
+                            color="b", ha="center", va="center")
+                else:
+                    self.axes.text(xbins[j]+0.5,ybins[i]+0.5, "", 
+                            color="b", ha="center", va="center")
+
+        # Set plot style
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
         self.axes.set_ylabel(column2)
         self.axes.set_xlabel(column1)
-        self.color_bar = self.figure.colorbar(heatmap[3], ax=self.axes)
+        self.color_bar = self.figure.colorbar(im, ax=self.axes)
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
