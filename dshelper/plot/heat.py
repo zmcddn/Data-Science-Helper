@@ -18,8 +18,10 @@ except ImportError:
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
 import matplotlib.cm as cm
+
 
 
 class HeatPanel(wx.Panel):
@@ -130,12 +132,26 @@ class HeatPanel(wx.Panel):
         if self.color_bar:
             self.color_bar.remove()
 
-        # # Check data type
-        # if data.dtype == "object":
-        #     # Different drawing method for strings
-        #     value_count = data.value_counts().sort_index()
-        #     value_count.plot(kind="bar", ax=self.axes)
-        # else:
+        # Check data type
+        if data1.dtype == "object":
+            # self.axes.set_xticklabels(["male", "", "", "", "", "Female"], rotation='vertical')
+            new_df_1 = self.df.assign(id=(self.df[column1]).astype('category').cat.codes)
+            data1 = new_df_1["id"]
+
+            labels = list(pd.unique(new_df_1[column1].values.ravel('K')))
+
+            def format_fn(tick_val, tick_pos):
+                if int(tick_val) in data1:
+                    return labels[int(tick_val)]
+                else:
+                    return ''
+            self.axes.xaxis.set_major_formatter(FuncFormatter(format_fn))
+            self.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+        elif data2.dtype == "object":
+            # self.axes.set_yticklabels(data2, fontsize=18)
+            new_df_2 = self.df.assign(id=(self.df[column2]).astype('category').cat.codes)
+            data2 = new_df_2["id"]
 
         heatmap = self.axes.hist2d(
             data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1
