@@ -10,10 +10,12 @@ import matplotlib
 matplotlib.use("WXAgg")
 
 try:
-    import seaborn
-    seaborn.set()
+    import seaborn as sns
+    sns.set()
 except ImportError:
     pass
+
+from sklearn.preprocessing import LabelEncoder
 
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
@@ -61,18 +63,34 @@ class PairPanel(wx.Panel):
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
         selcted_column = self.available_columns[selected_column_id]
 
-        self.draw_pair(selcted_column, self.df[selcted_column])
+        self.draw_pair(selcted_column)
 
-    def draw_pair(self, column_name, data):
-        pass
-        # # Reset plot forst
-        # self.axes.clear()
+    def draw_pair(self, column_name):
+        # Reset plot forst
+        self.axes.clear()
 
+        df = self.df[self.available_columns]
+        label = LabelEncoder()
 
-        # # Set plot info
-        # self.axes.set_title("Histogram Plot for %s" % column_name)
-        # self.axes.set_ylabel("Value Count")
-        # self.canvas.draw()
+        for num, column_type in enumerate(df.dtypes):
+            if str(column_type) == "object":
+                # Clean categorical data
+                original_column_name = self.df.columns[num]
+                print("Start working on:", original_column_name)
+                column_name = original_column_name + "_code"
+                df[column_name] = label.fit_transform(df[original_column_name])
+                df.drop(original_column_name, axis=1, inplace=True)
+
+                if original_column_name == "Ticket":
+                    df.drop("Cabin", axis=1, inplace=True)
+                    df.drop("Embarked", axis=1, inplace=True)
+                    break
+                print(original_column_name, "Finished\n")
+
+        pair_plot = sns.pairplot(df, hue =column_name, palette = 'deep', size=1.2, diag_kind = 'kde', diag_kws=dict(shade=True), plot_kws=dict(s=10), ax=self.axes)
+        pair_plot.set(xticklabels=[])
+
+        self.canvas.draw()
 
     def update_available_column(self, available_columns):
         self.available_columns = available_columns
