@@ -47,22 +47,24 @@ class BoxViolinPanel(wx.Panel):
         self.box_figure = Figure()
         self.box_axes = self.box_figure.add_subplot(111)
         self.box_canvas = FigureCanvas(self.box_panel, -1, self.box_figure)
-        self.box_color_bar = None  # Flag for color bar
         self.box_toolbar = NavigationToolbar(self.box_canvas)
 
         self.violin_figure = Figure()
         self.violin_axes = self.violin_figure.add_subplot(111)
         self.violin_canvas = FigureCanvas(self.violin_panel, -1, self.violin_figure)
-        self.violin_color_bar = None  # Flag for color bar
         self.violin_toolbar = NavigationToolbar(self.violin_canvas)
 
         # Drop-down select boxes
         self.text_y_axis = wx.StaticText(self.buttonpanel, label='Y Axis:')
         self.text_x_axis = wx.StaticText(self.buttonpanel, label='X Axis:')
-        self.column1 = wx.ComboBox(
+        self.text_hue = wx.StaticText(self.buttonpanel, label='Hue:')
+        self.column_x = wx.ComboBox(
             self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
-        self.column2 = wx.ComboBox(
+        self.column_y = wx.ComboBox(
+            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        )
+        self.column_hue = wx.ComboBox(
             self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
@@ -82,9 +84,11 @@ class BoxViolinPanel(wx.Panel):
         # Bottom button bar layout
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         button_sizer.Add(self.text_x_axis, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        button_sizer.Add(self.column1, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.column_x, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(self.text_y_axis, 0, wx.ALL | wx.ALIGN_CENTER, 5)
-        button_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.column_y, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.text_hue, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        button_sizer.Add(self.column_hue, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.buttonpanel.SetSizer(button_sizer)
 
         # Main panel layout
@@ -97,39 +101,48 @@ class BoxViolinPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
-        selected_column_id_1 = self.column1.GetCurrentSelection()
-        selcted_column_1 = self.available_columns[selected_column_id_1]
+        selected_column_id_x = self.column_x.GetCurrentSelection()
+        selcted_column_x = self.available_columns[selected_column_id_x]
 
-        selected_column_id_2 = self.column2.GetCurrentSelection()
-        selcted_column_2 = self.available_columns[selected_column_id_2]
+        selected_column_id_y = self.column_y.GetCurrentSelection()
+        selcted_column_y = self.available_columns[selected_column_id_y]
 
-        if selected_column_id_1 > 0 and selected_column_id_2 > 0:
+        selected_column_id_hue = self.column_hue.GetCurrentSelection()
+        selcted_column_hue = self.available_columns[selected_column_id_hue]
+
+        if selected_column_id_x > 0 and selected_column_id_y > 0 and selected_column_id_hue > 0:
             self.draw_plots(
-                selcted_column_1,
-                selcted_column_2,
-                self.df[selcted_column_1],
-                self.df[selcted_column_2],
+                selcted_column_x,
+                selcted_column_y,
+                selcted_column_hue,
             )
 
-    def draw_plots(self, column1, column2, data1, data2):
-        pass
-        # # Reset plot first
-        # self.axes.clear()
+    def draw_plots(self, column_x, column_y, column_hue):
+        # Reset plot first
+        self.box_axes.clear()
+        self.violin_axes.clear()
 
-        # if self.color_bar:
-        #     self.color_bar.remove()
+        # Box plot
+        sns.boxplot(x=column_x, y=column_y, hue=column_hue, data=self.df, ax=self.box_axes)
 
-        # # Set plot style
-        # self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
-        # self.axes.set_ylabel(column2)
-        # self.axes.set_xlabel(column1)
-        # self.color_bar = self.figure.colorbar(im, ax=self.axes)
-        # self.canvas.draw()
+        # Violin plot
+        sns.violinplot(x=column_x, y=column_y, hue=column_hue, data=self.df, split=True, ax=self.violin_axes)
+
+        # Set plot style
+        self.box_axes.set_title("Box Plot for {} and {}".format(column_x, column_y))
+        self.box_axes.set_ylabel(column_y)
+        self.box_axes.set_xlabel(column_x)
+        self.box_canvas.draw()
+
+        self.violin_axes.set_title("Violin Plot for {} and {}".format(column_x, column_y))
+        self.violin_axes.set_ylabel(column_y)
+        self.violin_axes.set_xlabel(column_x)
+        self.violin_canvas.draw()
 
     def update_available_column(self, available_columns):
         self.available_columns = available_columns
-        self.column1.Clear()
-        self.column2.Clear()
+        self.column_x.Clear()
+        self.column_y.Clear()
         for column in self.available_columns:
-            self.column1.Append(column)
-            self.column2.Append(column)
+            self.column_x.Append(column)
+            self.column_y.Append(column)
