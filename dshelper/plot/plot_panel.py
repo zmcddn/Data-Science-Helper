@@ -17,6 +17,7 @@ from matplotlib.figure import Figure
 
 from .hist import HistPanel
 from .heat import HeatPanel
+from .box_violin import BoxViolinPanel
 
 
 class PlotPanel(wx.Panel):
@@ -37,16 +38,16 @@ class PlotPanel(wx.Panel):
         self.heat_page = HeatPanel(plot_notebook, df=self.df)
         self.distribution_page = wx.Panel(plot_notebook)
         self.scatter_page = wx.Panel(plot_notebook)
-        self.boxplot_page = wx.Panel(plot_notebook)
-        self.violin_page = wx.Panel(plot_notebook)
+        self.box_violin_page = BoxViolinPanel(plot_notebook, df=self.df)
+        # self.violin_page = wx.Panel(plot_notebook)
 
         # Add pages into the notebook for display
         plot_notebook.AddPage(self.hist_page, "Histogram")
         plot_notebook.AddPage(self.heat_page, "Heat Map")
         plot_notebook.AddPage(self.distribution_page, "Distribution")
         plot_notebook.AddPage(self.scatter_page, "Scatter Plot")
-        plot_notebook.AddPage(self.boxplot_page, "Box Plot")
-        plot_notebook.AddPage(self.violin_page, "Violin Plot")
+        plot_notebook.AddPage(self.box_violin_page, "Box and Violin Plots")
+        # plot_notebook.AddPage(self.violin_page, "Violin Plot")
 
         # Put the notebook in a sizer in the panel for layout
         sizer = wx.BoxSizer()
