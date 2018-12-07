@@ -5,9 +5,6 @@ import numpy as np
 from numpy import arange, sin, pi
 
 import matplotlib
-
-# import seaborn as sns
-
 matplotlib.use("WXAgg")
 
 # import matplotlib.pyplot as plt
@@ -19,6 +16,7 @@ from .hist import HistPanel
 from .heat import HeatPanel
 from .box_violin import BoxViolinPanel
 from .pair import PairPanel
+from .scatter import ScatterPanel
 
 
 class PlotPanel(wx.Panel):
@@ -38,7 +36,7 @@ class PlotPanel(wx.Panel):
         self.hist_page = HistPanel(plot_notebook, df=self.df)
         self.heat_page = HeatPanel(plot_notebook, df=self.df)
         self.distribution_page = wx.Panel(plot_notebook)
-        self.scatter_page = wx.Panel(plot_notebook)
+        self.scatter_page = ScatterPanel(plot_notebook, df=self.df)
         self.box_violin_page = BoxViolinPanel(plot_notebook, df=self.df)
         self.pair_page = PairPanel(plot_notebook, df=self.df)
         # self.violin_page = wx.Panel(plot_notebook)
