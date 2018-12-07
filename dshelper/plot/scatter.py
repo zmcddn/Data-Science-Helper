@@ -39,8 +39,8 @@ class ScatterPanel(wx.Panel):
         self.toolbar = NavigationToolbar(self.canvas)
 
         # Drop-down select boxes
-        self.text_y_axis = wx.StaticText(self, label='Y Axis:')
-        self.text_x_axis = wx.StaticText(self, label='X Axis:')
+        self.text_y_axis = wx.StaticText(self, label="Y Axis:")
+        self.text_x_axis = wx.StaticText(self, label="X Axis:")
         self.column_x = wx.ComboBox(
             self, choices=self.available_columns, style=wx.CB_READONLY
         )
@@ -65,15 +65,10 @@ class ScatterPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
-        selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selcted_column = self.available_columns[selected_column_id]
-
-        self.draw_pair(selcted_column)
-
-        selected_column_id_x = self.column1.GetCurrentSelection()
+        selected_column_id_x = self.column_x.GetCurrentSelection()
         selcted_column_x = self.available_columns[selected_column_id_x]
 
-        selected_column_id_y = self.column2.GetCurrentSelection()
+        selected_column_id_y = self.column_y.GetCurrentSelection()
         selcted_column_y = self.available_columns[selected_column_id_y]
 
         if selected_column_id_x > 0 and selected_column_id_y > 0:
@@ -84,13 +79,21 @@ class ScatterPanel(wx.Panel):
                 self.df[selcted_column_y],
             )
 
-    def draw_scatter(self, column1, column2, data1, data2):
+    def draw_scatter(self, column_x, column_y, data_x, data_y):
         # Reset plot forst
         self.axes.clear()
 
-        df = self.df[self.available_columns]
+        try:
+            self.axes.plot(data_x, data_y, "o")
+        except ValueError as e:
+            # log action
+            _log_message = "\nScatter plot failed due to error:\n--> {}".format(e)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
-
+        # Set plot style
+        self.axes.set_title("Scatter Plot for {} and {}".format(column_x, column_y))
+        self.axes.set_ylabel(column_y)
+        self.axes.set_xlabel(column_x)
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
