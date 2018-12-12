@@ -1,3 +1,5 @@
+import sys
+
 import wx
 
 import pandas as pd
@@ -7,7 +9,8 @@ from numpy import arange, sin, pi
 from wx.lib.pubsub import pub
 
 import matplotlib
-matplotlib.use("WXAgg")
+if 'linux' not in sys.platform:
+    matplotlib.use("WXAgg")
 
 try:
     import seaborn

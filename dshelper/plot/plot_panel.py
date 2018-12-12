@@ -1,3 +1,5 @@
+import sys
+
 import wx
 
 import pandas as pd
@@ -5,7 +7,8 @@ import numpy as np
 from numpy import arange, sin, pi
 
 import matplotlib
-matplotlib.use("WXAgg")
+if 'linux' not in sys.platform:
+    matplotlib.use("WXAgg")
 
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
