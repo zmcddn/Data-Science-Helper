@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
       libnotify-dev \
       libsm-dev 
 
+RUN /bin/bash -c 'pip3 install --upgrade pip'
 RUN /bin/bash -c 'pip3 install --default-timeout=1000 -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-16.04/ wxPython'
 RUN /bin/bash -c 'pip3 install matplotlib seaborn numpy scipy pandas scikit-learn'
 
