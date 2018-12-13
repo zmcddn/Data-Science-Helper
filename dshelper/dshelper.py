@@ -165,8 +165,70 @@ class SideSplitterPanel(wx.Panel):
         self.SetSizer(PanelSizer)
 
 
+class MyStatusBar(wx.StatusBar):
+    """
+    Custom status bar for extra functioning bnuttons
+    """
+
+    def __init__(self, parent):
+        wx.StatusBar.__init__(self, parent)
+
+        self.SetFieldsCount(5)
+        self.SetStatusWidths([200, 200, -1, 200, 200])
+        self.sizeChanged = False
+        self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.Bind(wx.EVT_IDLE, self.OnIdle)
+
+        # Text fields with intial content
+        self.SetStatusText("some text", 0)
+        self.SetStatusText("some text", 1)
+        self.SetStatusText("some text", 2)
+
+        # Field for buttons
+        self.hide_show_bottom = wx.Button(self, -1, "Hide Bottom Panel")
+        self.hide_show_side = wx.Button(self, -1, "Hide Right Panel")
+
+        # Set button styles for attention
+        self.hide_show_bottom.SetForegroundColour("orange")
+        self.hide_show_bottom.SetBackgroundColour("#FDE68B")  # light yellow
+        self.hide_show_side.SetForegroundColour("orange")
+        self.hide_show_side.SetBackgroundColour("#FDE68B")  # light yellow
+
+        # set the initial position for buttons
+        self.Reposition()
+
+    def OnSize(self, evt):
+        evt.Skip()
+        self.Reposition()  # for normal size events
+
+        # Set a flag so the idle time handler will also do the repositioning.
+        # It is done this way to get around a buglet where GetFieldRect is not
+        # accurate during the EVT_SIZE resulting from a frame maximize.
+        self.sizeChanged = True
+
+    def OnIdle(self, evt):
+        if self.sizeChanged:
+            self.Reposition()
+
+    # reposition the buttons
+    def Reposition(self):
+        rect1 = self.GetFieldRect(3)
+        rect1.x += 1
+        rect1.y += 1
+        self.hide_show_bottom.SetRect(rect1)
+
+        rect2 = self.GetFieldRect(4)
+        rect2.x += 1
+        rect2.y += 1
+        self.hide_show_side.SetRect(rect2)
+
+        self.sizeChanged = False
+
+
 class MainFrame(wx.Frame):
-    """Constructor"""
+    """
+    Main frame to display all the content
+    """
 
     def __init__(self, parent, id):
         wx.Frame.__init__(self, None, title="Data Science Helper")
@@ -181,14 +243,15 @@ class MainFrame(wx.Frame):
         else:
             memory_usage = "{:.2f} KB".format(_memory_use)
 
-        self.status_bar = self.CreateStatusBar(3)
+        # set custom status bar
+        self.status_bar = MyStatusBar(self)
+        self.SetStatusBar(self.status_bar)
 
         self.main_splitter = SideSplitterPanel(self, df=self.df)
 
         self.status_bar.SetStatusText(" Rows: {}".format(rows), 0)
         self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
         self.status_bar.SetStatusText(" Memory Usage: {}".format(memory_usage), 2)
-        self.status_bar.SetStatusWidths([200, 200, -1])
 
         self.Refresh()
         self.Show()
