@@ -9,6 +9,7 @@ License: MIT (see LICENSE for details)
 """
 
 import datetime
+import sys
 
 import pandas as pd
 import numpy as np
@@ -307,12 +308,18 @@ class MainFrame(wx.Frame):
         self.Show()
         self.Maximize(True)
 
+        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
+
         pub.subscribe(self.update_column_stat, "UPDATE_DF")
 
     def update_column_stat(self, df):
         # update number of columns
         cols = df.shape[1]
         self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
+
+    def OnCloseWindow(self, event):
+        self.Destroy()
+        sys.exit(0)
 
 
 if __name__ == "__main__":
