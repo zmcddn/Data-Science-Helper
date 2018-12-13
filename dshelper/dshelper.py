@@ -85,17 +85,17 @@ class DFSplitterPanel(wx.Panel):
 
         self.df = df
 
-        splitter = wx.SplitterWindow(
+        self.splitter = wx.SplitterWindow(
             self, style=wx.SP_NOBORDER | wx.SP_3DSASH | wx.SP_LIVE_UPDATE
         )
-        topPanel = wx.Panel(splitter)
-        bottomPanel = wx.Panel(splitter)
-        topPanel.SetBackgroundColour("#AED6F1")
-        bottomPanel.SetBackgroundColour("#F9E79F")
+        self.topPanel = wx.Panel(self.splitter)
+        self.bottomPanel = wx.Panel(self.splitter)
+        self.topPanel.SetBackgroundColour("#AED6F1")
+        self.bottomPanel.SetBackgroundColour("#F9E79F")
 
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
-        data_notebook = wx.Notebook(topPanel)
+        data_notebook = wx.Notebook(self.topPanel)
         self.raw_data_page = DataTablePanel(data_notebook, -1, df=self.df)
         self.plot_page = PlotPanel(data_notebook, df=self.df)
         self.raw_data_page.SetBackgroundColour("WHITE")
@@ -108,19 +108,28 @@ class DFSplitterPanel(wx.Panel):
         # Put the notebook in a sizer in the panel for layout
         sizer = wx.BoxSizer()
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
-        topPanel.SetSizer(sizer)
+        self.topPanel.SetSizer(sizer)
 
-        self.data_describe = DataDescribePanel(bottomPanel, -1, df=self.df)
+        self.data_describe = DataDescribePanel(self.bottomPanel, -1, df=self.df)
         bottom_sizer = wx.BoxSizer()
         bottom_sizer.Add(self.data_describe, 1, wx.EXPAND | wx.SP_NOBORDER)
-        bottomPanel.SetSizer(bottom_sizer)
+        self.bottomPanel.SetSizer(bottom_sizer)
 
         # Setup splitter window and put it in a sizer for display
-        splitter.SplitHorizontally(topPanel, bottomPanel)
-        splitter.SetSashGravity(0.7)  # Set proportion for the splitter window
+        self.splitter.SplitHorizontally(self.topPanel, self.bottomPanel)
+        self.splitter.SetSashGravity(0.7)  # Set proportion for the splitter window
         PanelSizer = wx.BoxSizer(wx.VERTICAL)
-        PanelSizer.Add(splitter, 1, wx.EXPAND | wx.ALL)
+        PanelSizer.Add(self.splitter, 1, wx.EXPAND | wx.ALL)
         self.SetSizer(PanelSizer)
+
+        pub.subscribe(self.hide_show_bottom_panel, "BOTTOM_PANEL")
+
+    def hide_show_bottom_panel(self, status):
+        if status == "hide":
+            self.splitter.Unsplit(self.bottomPanel)
+
+        if status == "show":
+            self.splitter.SplitHorizontally(self.topPanel, self.bottomPanel)
 
 
 class SideSplitterPanel(wx.Panel):
