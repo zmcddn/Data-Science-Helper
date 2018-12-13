@@ -134,17 +134,17 @@ class SideSplitterPanel(wx.Panel):
 
         self.df = df
 
-        splitter = wx.SplitterWindow(
+        self.splitter = wx.SplitterWindow(
             self, style=wx.SP_NOBORDER | wx.SP_3DSASH | wx.SP_LIVE_UPDATE
         )
-        leftPanel = DFSplitterPanel(splitter, df=self.df)
-        rightPanel = wx.Panel(splitter)
-        leftPanel.SetBackgroundColour("YELLOW GREEN")
-        rightPanel.SetBackgroundColour("SLATE BLUE")
+        self.leftPanel = DFSplitterPanel(self.splitter, df=self.df)
+        self.rightPanel = wx.Panel(self.splitter)
+        self.leftPanel.SetBackgroundColour("YELLOW GREEN")
+        self.rightPanel.SetBackgroundColour("SLATE BLUE")
 
         # Create a notebook for the right panel (log/stat panel)
         # each page serves a different function
-        data_notebook = wx.Notebook(rightPanel)
+        data_notebook = wx.Notebook(self.rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
         self.column_page = ColumnSelectionPanel(data_notebook, -1, df=self.df)
         self.log_page = LogPanel(data_notebook, -1)
@@ -156,13 +156,22 @@ class SideSplitterPanel(wx.Panel):
         # Put the notebook in a sizer in the panel for layout
         sizer = wx.BoxSizer()
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
-        rightPanel.SetSizer(sizer)
+        self.rightPanel.SetSizer(sizer)
 
-        splitter.SplitVertically(leftPanel, rightPanel)
-        splitter.SetSashGravity(0.8)  # Set proportion for the splitter window
+        self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
+        self.splitter.SetSashGravity(0.8)  # Set proportion for the splitter window
         PanelSizer = wx.BoxSizer(wx.VERTICAL)
-        PanelSizer.Add(splitter, 1, wx.EXPAND | wx.ALL)
+        PanelSizer.Add(self.splitter, 1, wx.EXPAND | wx.ALL)
         self.SetSizer(PanelSizer)
+
+        pub.subscribe(self.hide_show_right_panel, "RIGHT_PANEL")
+
+    def hide_show_right_panel(self, status):
+        if status == "hide":
+            self.splitter.Unsplit(self.rightPanel)
+
+        if status == "show":
+            self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
 
 
 class MyStatusBar(wx.StatusBar):
@@ -185,14 +194,17 @@ class MyStatusBar(wx.StatusBar):
         self.SetStatusText("some text", 2)
 
         # Field for buttons
-        self.hide_show_bottom = wx.Button(self, -1, "Hide Bottom Panel")
-        self.hide_show_side = wx.Button(self, -1, "Hide Right Panel")
+        self.hide_show_bottom = wx.ToggleButton(self, -1, "Hide Bottom Panel")
+        self.hide_show_side = wx.ToggleButton(self, -1, "Hide Right Panel")
 
         # Set button styles for attention
         self.hide_show_bottom.SetForegroundColour("orange")
         self.hide_show_bottom.SetBackgroundColour("#FDE68B")  # light yellow
         self.hide_show_side.SetForegroundColour("orange")
         self.hide_show_side.SetBackgroundColour("#FDE68B")  # light yellow
+
+        # Button functions
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.hide_show_panels)
 
         # set the initial position for buttons
         self.Reposition()
@@ -223,6 +235,35 @@ class MyStatusBar(wx.StatusBar):
         self.hide_show_side.SetRect(rect2)
 
         self.sizeChanged = False
+
+    def hide_show_panels(self, event):
+        # Function for bottom panel
+        if self.hide_show_bottom.GetValue() == True:
+            # Hide bottom panel
+            pub.sendMessage("BOTTOM_PANEL", status="hide")
+            self.hide_show_bottom.SetLabel("Show Bottom Panel")
+            self.hide_show_bottom.SetForegroundColour("blue")
+            self.hide_show_bottom.SetBackgroundColour("#C8FD8B")  # light green
+        elif self.hide_show_bottom.GetValue() == False:
+            # Show bottom panel
+            pub.sendMessage("BOTTOM_PANEL", status="show")
+            self.hide_show_bottom.SetLabel("Hide Bottom Panel")
+            self.hide_show_bottom.SetForegroundColour("orange")
+            self.hide_show_bottom.SetBackgroundColour("#FDE68B")  # light yellow
+
+        # Function for right panel
+        if self.hide_show_side.GetValue() == True:
+            # Hide bottom panel
+            pub.sendMessage("RIGHT_PANEL", status="hide")
+            self.hide_show_side.SetLabel("Show Right Panel")
+            self.hide_show_side.SetForegroundColour("blue")
+            self.hide_show_side.SetBackgroundColour("#C8FD8B")  # light green
+        elif self.hide_show_side.GetValue() == False:
+            # Show bottom panel
+            pub.sendMessage("RIGHT_PANEL", status="show")
+            self.hide_show_side.SetLabel("Hide Right Panel")
+            self.hide_show_side.SetForegroundColour("orange")
+            self.hide_show_side.SetBackgroundColour("#FDE68B")  # light yellow
 
 
 class MainFrame(wx.Frame):
