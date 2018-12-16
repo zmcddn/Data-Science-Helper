@@ -285,7 +285,7 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, title="Data Science Helper")
 
         if df is not None:
-            self.df = df
+            self.df = prepare_df(df)
         else:
             self.df = get_df()
         cols = self.df.shape[1]
@@ -324,8 +324,22 @@ class MainFrame(wx.Frame):
         self.Destroy()
         sys.exit(0)
 
+def prepare_df(df):
+    """
+    This function converts the df header into string format
+    for the gui to be able to plot
+    """
 
-def helpdf(df):
+    columns = list(df.columns.values)
+    for num, item in enumerate(columns):
+        if not isinstance(item, str):
+            columns[num] = "{}".format(item)
+
+    df.columns = columns
+
+    return df
+
+def dshelper(df):
     """
     The function to run dshelper
     """
@@ -336,4 +350,4 @@ def helpdf(df):
 
 
 if __name__ == "__main__":
-    helpdf(get_df())
+    dshelper(get_df())
