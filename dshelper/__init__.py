@@ -7,5 +7,11 @@ In addition, it provides some functionalities in helping with some exploratory a
 Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
+from __future__ import absolute_import
+
+from dshelper.dshelper import dshelper
+
 
 __version__ = "1.0.0"
+
+__all__ = ["dshelper"]

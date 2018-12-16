@@ -18,8 +18,12 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-from data.data_panel import DataTablePanel, DataDescribePanel, ColumnSelectionPanel
-from plot.plot_panel import PlotPanel
+from dshelper.data.data_panel import (
+    DataTablePanel,
+    DataDescribePanel,
+    ColumnSelectionPanel,
+)
+from dshelper.plot.plot_panel import PlotPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -324,6 +328,7 @@ class MainFrame(wx.Frame):
         self.Destroy()
         sys.exit(0)
 
+
 def prepare_df(df):
     """
     This function converts the df header into string format
@@ -338,6 +343,7 @@ def prepare_df(df):
     df.columns = columns
 
     return df
+
 
 def dshelper(df):
     """
