@@ -281,10 +281,13 @@ class MainFrame(wx.Frame):
     Main frame to display all the content
     """
 
-    def __init__(self, parent, id):
-        wx.Frame.__init__(self, None, title="Data Science Helper")
+    def __init__(self, df):
+        wx.Frame.__init__(self, None, -1, title="Data Science Helper")
 
-        self.df = get_df()
+        if df is not None:
+            self.df = df
+        else:
+            self.df = get_df()
         cols = self.df.shape[1]
         rows = self.df.shape[0]
         _memory_use = self.df.memory_usage(deep=True).sum() / 1024
@@ -322,7 +325,15 @@ class MainFrame(wx.Frame):
         sys.exit(0)
 
 
-if __name__ == "__main__":
+def helpdf(df):
+    """
+    The function to run dshelper
+    """
+
     app = wx.App()
-    MainFrame(None, -1)
+    frame = MainFrame(df)
     app.MainLoop()
+
+
+if __name__ == "__main__":
+    helpdf(get_df())
