@@ -19,12 +19,20 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-from dshelper.data.data_panel import (
-    DataTablePanel,
-    DataDescribePanel,
-    ColumnSelectionPanel,
-)
-from dshelper.plot.plot_panel import PlotPanel
+try:
+    from dshelper.data.data_panel import (
+        DataTablePanel,
+        DataDescribePanel,
+        ColumnSelectionPanel,
+    )
+    from dshelper.plot.plot_panel import PlotPanel
+except ModuleNotFoundError:
+    from data.data_panel import (
+        DataTablePanel,
+        DataDescribePanel,
+        ColumnSelectionPanel,
+    )
+    from plot.plot_panel import PlotPanel
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -42,9 +50,14 @@ def get_df():
     # # df.reset_index(inplace=True)
     # # df = pd.DataFrame(np.random.random((10, 5)))
 
-    dir_path = os.path.abspath(os.path.dirname("train.csv"))
-    csv_filename = os.path.join(dir_path, 'dshelper\\titanic_data\\train.csv')
-    df = pd.read_csv(csv_filename)
+    try:
+        # Import as module, use absolute path
+        dir_path = os.path.abspath(os.path.dirname("train.csv"))
+        csv_filename = os.path.join(dir_path, "dshelper\\titanic_data\\train.csv")
+        df = pd.read_csv(csv_filename)
+    except FileNotFoundError:
+        # Run as function, use relative path
+        df = pd.read_csv("./titanic_data/train.csv")
 
     # Insert some random dates into the df
     random_dates = [
@@ -359,4 +372,4 @@ def dshelper(df):
 
 
 if __name__ == "__main__":
-    dshelper(get_df())
+    dshelper(None)
