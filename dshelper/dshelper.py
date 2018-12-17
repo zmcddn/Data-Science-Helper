@@ -10,6 +10,7 @@ License: MIT (see LICENSE for details)
 
 import datetime
 import sys
+import os
 
 import pandas as pd
 import numpy as np
@@ -41,7 +42,9 @@ def get_df():
     # # df.reset_index(inplace=True)
     # # df = pd.DataFrame(np.random.random((10, 5)))
 
-    df = pd.read_csv("./titanic_data/train.csv")
+    dir_path = os.path.abspath(os.path.dirname("train.csv"))
+    csv_filename = os.path.join(dir_path, 'dshelper\\titanic_data\\train.csv')
+    df = pd.read_csv(csv_filename)
 
     # Insert some random dates into the df
     random_dates = [
