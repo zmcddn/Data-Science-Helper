@@ -26,7 +26,7 @@ try:
         ColumnSelectionPanel,
     )
     from dshelper.plot.plot_panel import PlotPanel
-except ModuleNotFoundError:
+except ImportError:
     from data.data_panel import (
         DataTablePanel,
         DataDescribePanel,
