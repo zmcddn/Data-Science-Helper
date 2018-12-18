@@ -1,0 +1,8 @@
+wxpython>=3.*
+matplotlib 
+numpy 
+scipy 
+pandas 
+scikit-learn 
+seaborn
+PyPubSub
