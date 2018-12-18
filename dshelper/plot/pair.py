@@ -72,26 +72,37 @@ class PairPanel(wx.Panel):
         # Reset plot forst
         self.axes.clear()
 
+        start_message = "\nPrepare to plot pair plots ..."
+        pub.sendMessage("LOG_MESSAGE", log_message=start_message)
+        _spacing = " "*6
+
         df = self.df[self.available_columns]
         label = LabelEncoder()
 
         for num, column_type in enumerate(df.dtypes):
             if str(column_type) == "object":
-                # Clean categorical data
                 original_column_name = self.df.columns[num]
-                print("Start working on:", original_column_name)
-                column_name = original_column_name + "_code"
-                df[column_name] = label.fit_transform(df[original_column_name])
-                df.drop(original_column_name, axis=1, inplace=True)
+                _message = "--> Process encoder on column: {}".format(original_column_name)
+                pub.sendMessage("LOG_MESSAGE", log_message=_message)
 
-                if original_column_name == "Ticket":
-                    df.drop("Cabin", axis=1, inplace=True)
-                    df.drop("Embarked", axis=1, inplace=True)
-                    break
-                print(original_column_name, "Finished\n")
+                try:
+                    # Clean categorical data
+                    new_column_name = original_column_name + "_code"
+                    df[new_column_name] = label.fit_transform(df[original_column_name])
+                    df.drop(original_column_name, axis=1, inplace=True)
 
-        pair_plot = sns.pairplot(df, hue =column_name, palette = 'deep', size=1.2, diag_kind = 'kde', diag_kws=dict(shade=True), plot_kws=dict(s=10), ax=self.axes)
+                except (ValueError, TypeError) as e:
+                    df.drop(original_column_name, axis=1, inplace=True)
+                    _message = "{}Column [{}] droped <--".format(_spacing, original_column_name)
+                    pub.sendMessage("LOG_MESSAGE", log_message=_message)
+                
+                pub.sendMessage("LOG_MESSAGE", log_message="{}Finished".format(_spacing))
+
+        pair_plot = sns.pairplot(df, hue =column_name, palette = 'deep', size=1.2, diag_kind = 'kde', diag_kws=dict(shade=True), plot_kws=dict(s=10))
         pair_plot.set(xticklabels=[])
+
+        end_message = "Pair plots finished"
+        pub.sendMessage("LOG_MESSAGE", log_message=end_message)
 
         self.canvas.draw()
 
