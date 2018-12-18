@@ -361,7 +361,7 @@ def prepare_df(df):
     return df
 
 
-def dshelper(df):
+def dshelp(df):
     """
     The function to run dshelper
     """
@@ -372,4 +372,4 @@ def dshelper(df):
 
 
 if __name__ == "__main__":
-    dshelper(None)
+    dshelp(None)
