@@ -9,7 +9,7 @@ from numpy import arange, sin, pi
 from wx.lib.pubsub import pub
 
 import matplotlib
-if 'linux' not in sys.platform:
+if "linux" not in sys.platform:
     matplotlib.use("WXAgg")
 
 try:
@@ -24,6 +24,7 @@ from sklearn.preprocessing import LabelEncoder
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 
 class PairPanel(wx.Panel):
@@ -43,7 +44,7 @@ class PairPanel(wx.Panel):
 
         self.toolbar = NavigationToolbar(self.canvas)
 
-        self.text_hue = wx.StaticText(self, label='Hue:')
+        self.text_hue = wx.StaticText(self, label="Hue:")
         self.dropdown_menu = wx.ComboBox(
             self, choices=self.available_columns, style=wx.CB_READONLY
         )
@@ -74,7 +75,7 @@ class PairPanel(wx.Panel):
 
         start_message = "\nPrepare to plot pair plots ..."
         pub.sendMessage("LOG_MESSAGE", log_message=start_message)
-        _spacing = " "*6
+        _spacing = " " * 6
 
         df = self.df[self.available_columns]
         label = LabelEncoder()
@@ -82,7 +83,9 @@ class PairPanel(wx.Panel):
         for num, column_type in enumerate(df.dtypes):
             if str(column_type) == "object":
                 original_column_name = self.df.columns[num]
-                _message = "--> Process encoder on column: {}".format(original_column_name)
+                _message = "--> Process encoder on column: {}".format(
+                    original_column_name
+                )
                 pub.sendMessage("LOG_MESSAGE", log_message=_message)
 
                 try:
@@ -93,13 +96,54 @@ class PairPanel(wx.Panel):
 
                 except (ValueError, TypeError) as e:
                     df.drop(original_column_name, axis=1, inplace=True)
-                    _message = "{}Column [{}] droped <--".format(_spacing, original_column_name)
+                    _message = "{}Column [{}] droped <--".format(
+                        _spacing, original_column_name
+                    )
                     pub.sendMessage("LOG_MESSAGE", log_message=_message)
-                
-                pub.sendMessage("LOG_MESSAGE", log_message="{}Finished".format(_spacing))
 
-        pair_plot = sns.pairplot(df, hue =column_name, palette = 'deep', size=1.2, diag_kind = 'kde', diag_kws=dict(shade=True), plot_kws=dict(s=10))
+                pub.sendMessage(
+                    "LOG_MESSAGE", log_message="{}Finished".format(_spacing)
+                )
+
+        pair_plot = sns.pairplot(
+            df,
+            hue=column_name,
+            palette="deep",
+            size=1.2,
+            diag_kind="kde",
+            diag_kws=dict(shade=True),
+            plot_kws=dict(s=10),
+        )
         pair_plot.set(xticklabels=[])
+
+        self.canvas.Destroy()
+        pp_rows = len(pair_plot.axes)
+        pp_cols = len(pair_plot.axes[0])
+        self.figure, self.axes = plt.subplots(pp_rows, pp_cols)
+
+        xlabels, ylabels = [], []
+        for ax in pair_plot.axes[-1, :]:
+            xlabel = ax.xaxis.get_label_text()
+            xlabels.append(xlabel)
+        for ax in pair_plot.axes[:, 0]:
+            ylabel = ax.yaxis.get_label_text()
+            ylabels.append(ylabel)
+
+        for i in range(len(xlabels)):
+            for j in range(len(ylabels)):
+                if i != j:
+                    sns.regplot(
+                        x=xlabels[i],
+                        y=ylabels[j],
+                        data=df,
+                        scatter=True,
+                        fit_reg=False,
+                        ax=self.axes[j, i],
+                    )
+                else:
+                    sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i])
+
+        self.canvas = FigureCanvas(self, -1, self.figure)
 
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
