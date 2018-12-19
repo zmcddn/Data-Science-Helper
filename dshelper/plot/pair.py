@@ -70,6 +70,14 @@ class PairPanel(wx.Panel):
         self.draw_pair(selcted_column)
 
     def draw_pair(self, column_name):
+        """
+        Seaborn pairplot return a series of subplots within one figure,
+        therefore it is really dificult to plot it directly in the existing 
+        figure. Instead, we mimic how it is plotted and add corresponding 
+        number of matplotlib subplots and plot the pairplot inside the 
+        matplotlib subplots
+        """
+
         # Reset plot forst
         self.axes.clear()
 
@@ -105,6 +113,7 @@ class PairPanel(wx.Panel):
                     "LOG_MESSAGE", log_message="{}Finished".format(_spacing)
                 )
 
+        # Produce pairpolot using seaborn
         pair_plot = sns.pairplot(
             df,
             hue=column_name,
@@ -114,13 +123,16 @@ class PairPanel(wx.Panel):
             diag_kws=dict(shade=True),
             plot_kws=dict(s=10),
         )
-        pair_plot.set(xticklabels=[])
+        # pair_plot.set(xticklabels=[])
 
-        self.canvas.Destroy()
+        # Get the number of rows and columns from the seaborn pairplot
         pp_rows = len(pair_plot.axes)
         pp_cols = len(pair_plot.axes[0])
-        self.figure, self.axes = plt.subplots(pp_rows, pp_cols)
 
+        # Update axes to the corresponding number of subplots from pairplot
+        self.axes = self.figure.subplots(pp_rows, pp_cols)
+
+        # Get the label and plotting order
         xlabels, ylabels = [], []
         for ax in pair_plot.axes[-1, :]:
             xlabel = ax.xaxis.get_label_text()
@@ -129,9 +141,11 @@ class PairPanel(wx.Panel):
             ylabel = ax.yaxis.get_label_text()
             ylabels.append(ylabel)
 
+        # Mimic how seaborn produce the pairplot using matplotlib subplots
         for i in range(len(xlabels)):
             for j in range(len(ylabels)):
                 if i != j:
+                    # Non-diagnal locations, scatter plot
                     sns.regplot(
                         x=xlabels[i],
                         y=ylabels[j],
@@ -141,14 +155,14 @@ class PairPanel(wx.Panel):
                         ax=self.axes[j, i],
                     )
                 else:
+                    # Diagnal locations, distribution plot
                     sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i])
-
-        self.canvas = FigureCanvas(self, -1, self.figure)
 
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
 
         self.canvas.draw()
+        self.Refresh()
 
     def update_available_column(self, available_columns):
         self.available_columns = available_columns
