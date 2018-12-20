@@ -88,6 +88,8 @@ class PairPanel(wx.Panel):
         df = self.df[self.available_columns]
         label = LabelEncoder()
 
+        # To-do: clean df with fillna
+
         for num, column_type in enumerate(df.dtypes):
             if str(column_type) == "object":
                 original_column_name = self.df.columns[num]
@@ -157,6 +159,17 @@ class PairPanel(wx.Panel):
                 else:
                     # Diagnal locations, distribution plot
                     sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i])
+
+                # Set plot labels, only set the outter plots to avoid label overlapping
+                if i == 0:
+                    self.axes[j, i].set_xlabel("")
+                    self.axes[j, i].set_ylabel(ylabels[j])
+                elif j == len(xlabels)-1:
+                    self.axes[j, i].set_xlabel(xlabels[i])
+                    self.axes[j, i].set_ylabel("")
+                else:
+                    self.axes[j, i].set_xlabel("")
+                    self.axes[j, i].set_ylabel("")
 
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
