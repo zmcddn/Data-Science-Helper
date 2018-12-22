@@ -146,6 +146,8 @@ class BoxViolinPanel(wx.Panel):
         self.available_columns = available_columns
         self.column_x.Clear()
         self.column_y.Clear()
+        self.column_hue.Clear()
         for column in self.available_columns:
             self.column_x.Append(column)
             self.column_y.Append(column)
+            self.column_hue.Append(column)

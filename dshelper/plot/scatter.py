@@ -101,6 +101,8 @@ class ScatterPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         self.available_columns = available_columns
-        self.dropdown_menu.Clear()
+        self.column_x.Clear()
+        self.column_y.Clear()
         for column in self.available_columns:
-            self.dropdown_menu.Append(column)
+            self.column_x.Append(column)
+            self.column_y.Append(column)
