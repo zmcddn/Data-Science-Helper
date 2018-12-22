@@ -99,21 +99,35 @@ class PairPanel(wx.Panel):
                 pub.sendMessage("LOG_MESSAGE", log_message=_message)
 
                 try:
-                    # Clean categorical data
-                    new_column_name = original_column_name + "_code"
-                    df[new_column_name] = label.fit_transform(df[original_column_name])
-                    df.drop(original_column_name, axis=1, inplace=True)
+                    # Case for datetime data
+                    df["new_datetime_column"] = pd.to_datetime(df[original_column_name])
+                    # Not plot the datetime for pairplot for now
+                    df.drop("new_datetime_column", axis=1, inplace=True)
+                    # df.drop(original_column_name, axis=1, inplace=True)
+                except ValueError:
+                    # Case for categorical data
+                    # Fill categorical missing values with mode
+                    df[original_column_name].fillna(df[original_column_name].mode()[0], inplace = True)
 
-                except (ValueError, TypeError) as e:
-                    df.drop(original_column_name, axis=1, inplace=True)
-                    _message = "{}Column [{}] droped <--".format(
-                        _spacing, original_column_name
+                    try:
+                        # Clean categorical data
+                        new_column_name = original_column_name + "_code"
+                        df[new_column_name] = label.fit_transform(df[original_column_name])
+                        df.drop(original_column_name, axis=1, inplace=True)
+
+                    except (ValueError, TypeError) as e:
+                        df.drop(original_column_name, axis=1, inplace=True)
+                        _message = "{}Column [{}] droped <--".format(
+                            _spacing, original_column_name
+                        )
+                        pub.sendMessage("LOG_MESSAGE", log_message=_message)
+
+                    pub.sendMessage(
+                        "LOG_MESSAGE", log_message="{}Finished".format(_spacing)
                     )
-                    pub.sendMessage("LOG_MESSAGE", log_message=_message)
-
-                pub.sendMessage(
-                    "LOG_MESSAGE", log_message="{}Finished".format(_spacing)
-                )
+            else:
+                # Fill numerical missing values with median
+                df[original_column_name].fillna(df[original_column_name].median(), inplace = True)
 
         # Produce pairpolot using seaborn
         pair_plot = sns.pairplot(
