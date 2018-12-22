@@ -83,7 +83,7 @@ class PairPanel(wx.Panel):
 
         start_message = "\nPrepare to plot pair plots ..."
         pub.sendMessage("LOG_MESSAGE", log_message=start_message)
-        _spacing = " " * 6
+        _spacing = " " * 7
 
         df = self.df[self.available_columns]
         label = LabelEncoder()
@@ -91,23 +91,27 @@ class PairPanel(wx.Panel):
         # To-do: clean df with fillna
 
         for num, column_type in enumerate(df.dtypes):
+            original_column_name = self.df.columns[num]
+            _message = "--> Processing column: {}".format(
+                original_column_name
+            )
+            pub.sendMessage("LOG_MESSAGE", log_message=_message)
+            
             if str(column_type) == "object":
-                original_column_name = self.df.columns[num]
-                _message = "--> Process encoder on column: {}".format(
-                    original_column_name
-                )
-                pub.sendMessage("LOG_MESSAGE", log_message=_message)
-
                 try:
                     # Case for datetime data
                     df["new_datetime_column"] = pd.to_datetime(df[original_column_name])
-                    # Not plot the datetime for pairplot for now
+
+                    # Plot the datetime for pairplot as categorical data for now
                     df.drop("new_datetime_column", axis=1, inplace=True)
-                    # df.drop(original_column_name, axis=1, inplace=True)
                 except ValueError:
                     # Case for categorical data
                     # Fill categorical missing values with mode
                     df[original_column_name].fillna(df[original_column_name].mode()[0], inplace = True)
+
+                    pub.sendMessage(
+                        "LOG_MESSAGE", log_message="{}Encoding...".format(_spacing)
+                    )
 
                     try:
                         # Clean categorical data
@@ -128,6 +132,8 @@ class PairPanel(wx.Panel):
             else:
                 # Fill numerical missing values with median
                 df[original_column_name].fillna(df[original_column_name].median(), inplace = True)
+
+        pub.sendMessage("LOG_MESSAGE", log_message="\nReady to plot...")
 
         # Produce pairpolot using seaborn
         pair_plot = sns.pairplot(
