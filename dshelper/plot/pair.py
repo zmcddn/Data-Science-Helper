@@ -90,13 +90,14 @@ class PairPanel(wx.Panel):
 
         # To-do: clean df with fillna
 
+        encoding_drop_columns = []
         for num, column_type in enumerate(df.dtypes):
-            original_column_name = self.df.columns[num]
-            _message = "--> Processing column: {}".format(
-                original_column_name
+            original_column_name = df.columns[num]
+            _message = "--> Processing column: {} --> {}".format(
+                original_column_name, column_type
             )
             pub.sendMessage("LOG_MESSAGE", log_message=_message)
-            
+
             if str(column_type) == "object":
                 try:
                     # Case for datetime data
@@ -106,8 +107,12 @@ class PairPanel(wx.Panel):
                     df.drop("new_datetime_column", axis=1, inplace=True)
                 except ValueError:
                     # Case for categorical data
-                    # Fill categorical missing values with mode
-                    df[original_column_name].fillna(df[original_column_name].mode()[0], inplace = True)
+
+                    if df[original_column_name].isnull().values.any():
+                        # Fill categorical missing values with mode
+                        df[original_column_name].fillna(
+                            df[original_column_name].mode()[0], inplace=True
+                        )
 
                     pub.sendMessage(
                         "LOG_MESSAGE", log_message="{}Encoding...".format(_spacing)
@@ -116,11 +121,13 @@ class PairPanel(wx.Panel):
                     try:
                         # Clean categorical data
                         new_column_name = original_column_name + "_code"
-                        df[new_column_name] = label.fit_transform(df[original_column_name])
-                        df.drop(original_column_name, axis=1, inplace=True)
+                        df[new_column_name] = label.fit_transform(
+                            df[original_column_name]
+                        )
+                        encoding_drop_columns.append(original_column_name)
 
                     except (ValueError, TypeError) as e:
-                        df.drop(original_column_name, axis=1, inplace=True)
+                        encoding_drop_columns.append(original_column_name)
                         _message = "{}Column [{}] droped <--".format(
                             _spacing, original_column_name
                         )
@@ -130,8 +137,15 @@ class PairPanel(wx.Panel):
                         "LOG_MESSAGE", log_message="{}Finished".format(_spacing)
                     )
             else:
-                # Fill numerical missing values with median
-                df[original_column_name].fillna(df[original_column_name].median(), inplace = True)
+                if df[original_column_name].isnull().values.any():
+                    # Fill numerical missing values with median
+                    df[original_column_name].fillna(
+                        df[original_column_name].median(), inplace=True
+                    )
+
+        # Drop all the original categorical data columns
+        if encoding_drop_columns:
+            df.drop(encoding_drop_columns, axis=1, inplace=True)
 
         pub.sendMessage("LOG_MESSAGE", log_message="\nReady to plot...")
 
@@ -145,7 +159,6 @@ class PairPanel(wx.Panel):
             diag_kws=dict(shade=True),
             plot_kws=dict(s=10),
         )
-        # pair_plot.set(xticklabels=[])
 
         # Get the number of rows and columns from the seaborn pairplot
         pp_rows = len(pair_plot.axes)
@@ -184,7 +197,7 @@ class PairPanel(wx.Panel):
                 if i == 0:
                     self.axes[j, i].set_xlabel("")
                     self.axes[j, i].set_ylabel(ylabels[j])
-                elif j == len(xlabels)-1:
+                elif j == len(xlabels) - 1:
                     self.axes[j, i].set_xlabel(xlabels[i])
                     self.axes[j, i].set_ylabel("")
                 else:
