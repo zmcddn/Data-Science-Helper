@@ -68,13 +68,18 @@ class HistPanel(wx.Panel):
         # Reset plot forst
         self.axes.clear()
 
-        # Check data type
-        if data.dtype == "object":
-            # Different drawing method for strings
-            value_count = data.value_counts().sort_index()
-            value_count.plot(kind="bar", ax=self.axes)
-        else:
-            self.axes.hist(data.dropna(), bins=100)
+        try:
+            # Check data type
+            if data.dtype == "object":
+                # Different drawing method for strings
+                value_count = data.value_counts().sort_index()
+                value_count.plot(kind="bar", ax=self.axes)
+            else:
+                self.axes.hist(data.dropna(), bins=100)
+        except ValueError as e:
+            # log Error
+            _log_message = "\nHistogram plot failed due to error:\n--> {}".format(e)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         # Set plot info
         self.axes.set_title("Histogram Plot for %s" % column_name)
