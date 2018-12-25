@@ -126,10 +126,20 @@ class BoxViolinPanel(wx.Panel):
         self.violin_axes.clear()
 
         # Box plot
-        sns.boxplot(x=column_x, y=column_y, hue=column_hue, data=self.df, ax=self.box_axes)
+        try:
+            sns.boxplot(x=column_x, y=column_y, hue=column_hue, data=self.df, ax=self.box_axes)
+        except ValueError as e:
+            # log Error
+            _log_message = "\nBox plot failed due to error:\n--> {}".format(e)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         # Violin plot
-        sns.violinplot(x=column_x, y=column_y, hue=column_hue, data=self.df, split=True, ax=self.violin_axes)
+        try:
+            sns.violinplot(x=column_x, y=column_y, hue=column_hue, data=self.df, split=True, ax=self.violin_axes)
+        except ValueError as e:
+            # log Error
+            _log_message = "\nVolin plot failed due to error:\n--> {}".format(e)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         # Set plot style
         self.box_axes.set_title("Box Plot for {} and {}".format(column_x, column_y))
