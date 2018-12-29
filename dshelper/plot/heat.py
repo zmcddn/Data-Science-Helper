@@ -167,7 +167,10 @@ class HeatPanel(wx.Panel):
             self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
 
         heatmap = self.axes.hist2d(
-            data1.fillna(0), data2.fillna(0), cmap=cm.tab20c, cmin=1
+            data1.fillna(data1.median()), 
+            data2.fillna(data2.median()), 
+            cmap=cm.tab20c, 
+            cmin=1,
         )
 
         # # Adds cross marks for null values
