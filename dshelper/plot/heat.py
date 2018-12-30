@@ -140,6 +140,7 @@ class HeatPanel(wx.Panel):
             new_df_1 = self.df.assign(id=(self.df[column1]).astype('category').cat.codes)
             data1 = new_df_1["id"]
 
+            # Set axis label with respect the content of the column
             labels = list(pd.unique(new_df_1[column1].values))
             label_pos = list(pd.unique(new_df_1["id"].values))
 
@@ -155,6 +156,7 @@ class HeatPanel(wx.Panel):
             new_df_2 = self.df.assign(id=(self.df[column2]).astype('category').cat.codes)
             data2 = new_df_2["id"]
 
+            # Set axis label with respect the content of the column
             labels = list(pd.unique(new_df_2[column2].values))
             label_pos = list(pd.unique(new_df_2["id"].values))
 
