@@ -147,7 +147,7 @@ class HeatPanel(wx.Panel):
             label_pos_x = list(pd.unique(new_df_1["id"].values))
 
             def format_fn_x(tick_val, tick_pos):
-                if int(tick_val) in data1:
+                if int(tick_val) in data1.values:
                     return labels_x[label_pos_x.index(int(tick_val))]
                 else:
                     return ''
@@ -171,7 +171,7 @@ class HeatPanel(wx.Panel):
             label_pos_y = list(pd.unique(new_df_2["id"].values))
 
             def format_fn_y(tick_val, tick_pos):
-                if int(tick_val) in data2:
+                if int(tick_val) in data2.values:
                     return labels_y[label_pos_y.index(int(tick_val))]
                 else:
                     return ''
