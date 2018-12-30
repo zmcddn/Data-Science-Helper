@@ -185,16 +185,29 @@ class HeatPanel(wx.Panel):
 
         # Setup plot annotation
         hist, xbins, ybins, im = heatmap[0], heatmap[1], heatmap[2], heatmap[3]
-        for i in range(len(ybins)-1):
-            for j in range(len(xbins)-1):
-                # print(hist[i,j], type(hist[i,j]), np.isnan(hist[i,j]))
+        x_middle_offset = (xbins[1] - xbins[0]) / 2
+        y_middle_offset = (ybins[1] - ybins[0]) / 2
+        for i in range(len(xbins)-1):
+            for j in range(len(ybins)-1):
                 # Do no display nan value
                 if not np.isnan(hist[i,j]):
-                    self.axes.text(xbins[j]+0.05,ybins[i]+0.05, hist[i,j], 
-                            color="b", ha="center", va="center")
+                    self.axes.text(
+                        x=xbins[i]+x_middle_offset, 
+                        y=ybins[j]+y_middle_offset, 
+                        s=hist[i,j], 
+                        color="b",
+                        ha="center",
+                        va="center",
+                    )
                 else:
-                    self.axes.text(xbins[j]+0.05,ybins[i]+0.05, "", 
-                            color="b", ha="center", va="center")
+                    self.axes.text(
+                        x=xbins[i], 
+                        y=ybins[j], 
+                        s="", 
+                        color="b", 
+                        ha="center", 
+                        va="center",
+                    )
 
         # Set plot style
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
