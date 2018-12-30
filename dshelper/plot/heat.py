@@ -141,7 +141,6 @@ class HeatPanel(wx.Panel):
                 id=(self.df[column1]).astype('category').cat.codes
             )
             data1 = new_df_1["id"]
-            data1.fillna(data1.mode(), inplace=True) # Fill categorical data with mode
 
             # Set axis label with respect the content of the column
             labels_x = list(pd.unique(new_df_1[column1].values))
@@ -154,6 +153,9 @@ class HeatPanel(wx.Panel):
                     return ''
             self.axes.xaxis.set_major_formatter(FuncFormatter(format_fn_x))
             self.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+            # Fill categorical data with mode
+            data1.fillna(data1.mode(), inplace=True) 
         else:
             # Fill numerical data with median
             data1.fillna(data1.median(), inplace=True) 
@@ -163,7 +165,6 @@ class HeatPanel(wx.Panel):
                 id=(self.df[column2]).astype('category').cat.codes
             )
             data2 = new_df_2["id"]
-            data2.fillna(data2.mode(), inplace=True) # Fill categorical data with mode
 
             # Set axis label with respect the content of the column
             labels_y = list(pd.unique(new_df_2[column2].values))
@@ -176,6 +177,9 @@ class HeatPanel(wx.Panel):
                     return ''
             self.axes.yaxis.set_major_formatter(FuncFormatter(format_fn_y))
             self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+
+            # Fill categorical data with mode
+            data2.fillna(data2.mode(), inplace=True)
         else:
             # Fill numerical data with median
             data2.fillna(data2.median(), inplace=True)
