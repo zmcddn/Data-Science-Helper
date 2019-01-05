@@ -189,7 +189,7 @@ class PairPanel(wx.Panel):
                     )
                 else:
                     # Diagnal locations, distribution plot
-                    sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i])
+                    sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i], legend=False)
 
                 # Set plot labels, only set the outter plots to avoid label overlapping
                 if i == 0:
