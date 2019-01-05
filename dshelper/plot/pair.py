@@ -37,6 +37,7 @@ class PairPanel(wx.Panel):
 
         self.df = df
         self.available_columns = list(self.df.columns)
+        self.hue_columns = self._get_hue_column()
 
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
@@ -46,7 +47,7 @@ class PairPanel(wx.Panel):
 
         self.text_hue = wx.StaticText(self, label="Hue:")
         self.dropdown_menu = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+            self, choices=self.hue_columns, style=wx.CB_READONLY
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
@@ -65,7 +66,7 @@ class PairPanel(wx.Panel):
 
     def column_selected(self, event):
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selcted_column = self.available_columns[selected_column_id]
+        selcted_column = self.hue_columns[selected_column_id]
 
         self.draw_pair(selcted_column)
 
@@ -249,8 +250,29 @@ class PairPanel(wx.Panel):
         self.canvas.draw()
         self.Refresh()
 
+    def _get_hue_column(self):
+        """
+        This function limits the available columns for hue selection.
+        
+        Currently it is set for the number 6, which is the number of distinct 
+        colors for the default seaborn color palette.
+        """
+
+        hue_columns = []
+        for column in self.available_columns:
+            if self.df[column].nunique() <= 6:
+                # Restrict hue selection based on distinct values in column
+                hue_columns.append(column)
+
+        return hue_columns
+
     def update_available_column(self, available_columns):
         self.available_columns = available_columns
+
+        # Update hue column selection
+        self.hue_columns = self._get_hue_column()
+
+        # Update dropdown menu
         self.dropdown_menu.Clear()
-        for column in self.available_columns:
+        for column in self.hue_columns:
             self.dropdown_menu.Append(column)
