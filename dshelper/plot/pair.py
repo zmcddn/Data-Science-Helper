@@ -193,9 +193,13 @@ class PairPanel(wx.Panel):
 
                 # Set plot labels, only set the outter plots to avoid label overlapping
                 if i == 0:
-                    self.axes[j, i].set_xlabel("")
+                    if j == len(xlabels) - 1:
+                        # Case for bottom left corner
+                        self.axes[j, i].set_xlabel(xlabels[i], fontsize=8)
+                    else:
+                        self.axes[j, i].set_xlabel("")
+                        self.axes[j, i].set_xticklabels([]) # Turn off tick labels
                     self.axes[j, i].set_ylabel(ylabels[j], fontsize=8)
-                    self.axes[j, i].set_xticklabels([]) # Turn off tick labels
                 elif j == len(xlabels) - 1:
                     self.axes[j, i].set_xlabel(xlabels[i], fontsize=8)
                     self.axes[j, i].set_ylabel("")
