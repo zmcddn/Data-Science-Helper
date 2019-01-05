@@ -72,7 +72,7 @@ class PairPanel(wx.Panel):
     def draw_pair(self, column_name):
         """
         Seaborn pairplot return a series of subplots within one figure,
-        therefore it is really dificult to plot it directly in the existing 
+        therefore it is really difficult to plot it directly in the existing 
         figure. Instead, we mimic how it is plotted and add corresponding 
         number of matplotlib subplots and plot the pairplot inside the 
         matplotlib subplots
@@ -87,8 +87,6 @@ class PairPanel(wx.Panel):
 
         df = self.df[self.available_columns]
         label = LabelEncoder()
-
-        # To-do: clean df with fillna
 
         encoding_drop_columns = []
         for num, column_type in enumerate(df.dtypes):
@@ -196,16 +194,32 @@ class PairPanel(wx.Panel):
                 # Set plot labels, only set the outter plots to avoid label overlapping
                 if i == 0:
                     self.axes[j, i].set_xlabel("")
-                    self.axes[j, i].set_ylabel(ylabels[j])
+                    self.axes[j, i].set_ylabel(ylabels[j], fontsize=8)
+                    self.axes[j, i].set_xticklabels([]) # Turn off tick labels
                 elif j == len(xlabels) - 1:
-                    self.axes[j, i].set_xlabel(xlabels[i])
+                    self.axes[j, i].set_xlabel(xlabels[i], fontsize=8)
                     self.axes[j, i].set_ylabel("")
+                    self.axes[j, i].set_yticklabels([]) # Turn off tick labels
                 else:
+                    # Hide labels
                     self.axes[j, i].set_xlabel("")
                     self.axes[j, i].set_ylabel("")
 
+                    # Turn off tick labels
+                    self.axes[j, i].set_xticklabels([])
+                    self.axes[j, i].set_yticklabels([])
+
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
+
+        self.figure.subplots_adjust(
+            left=0.03, # the left side of the subplots of the figure
+            bottom=0.08, # the bottom of the subplots of the figure
+            right=0.99, # the right side of the subplots of the figure
+            top=0.99,   # the top of the subplots of the figure
+            wspace=0.6, # the amount of width reserved for space between subplots
+            hspace=0.6, # the amount of height reserved for space between subplots
+        )
 
         self.canvas.draw()
         self.Refresh()
