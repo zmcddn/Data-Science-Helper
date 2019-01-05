@@ -124,6 +124,10 @@ class PairPanel(wx.Panel):
                         )
                         encoding_drop_columns.append(original_column_name)
 
+                        if column_name == original_column_name:
+                            # Update hue column
+                            column_name = new_column_name
+
                     except (ValueError, TypeError) as e:
                         encoding_drop_columns.append(original_column_name)
                         _message = "{}Column [{}] droped <--".format(
