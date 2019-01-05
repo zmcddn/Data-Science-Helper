@@ -178,22 +178,39 @@ class PairPanel(wx.Panel):
             ylabel = ax.yaxis.get_label_text()
             ylabels.append(ylabel)
 
+        # Setup hue for plots
+        hue_values = df[column_name].unique()
+        palette = sns.color_palette("muted") # get seaborn default colors
+        legend_color = palette.as_hex()
+
         # Mimic how seaborn produce the pairplot using matplotlib subplots
         for i in range(len(xlabels)):
             for j in range(len(ylabels)):
                 if i != j:
                     # Non-diagnal locations, scatter plot
-                    sns.regplot(
-                        x=xlabels[i],
-                        y=ylabels[j],
-                        data=df,
-                        scatter=True,
-                        fit_reg=False,
-                        ax=self.axes[j, i],
-                    )
+                    for num, value in enumerate(hue_values):
+                        sns.regplot(
+                            x=df[xlabels[i]][df[column_name] == value],
+                            y=df[ylabels[j]][df[column_name] == value],
+                            data=df,
+                            scatter=True,
+                            fit_reg=False,
+                            ax=self.axes[j, i],
+                            scatter_kws={
+                                's':10, # Set dot size
+                                'facecolor':legend_color[num], # Set dot color
+                            }
+                        )
                 else:
                     # Diagnal locations, distribution plot
-                    sns.kdeplot(df[xlabels[i]], ax=self.axes[j, i], legend=False)
+                    for num, value in enumerate(hue_values):
+                        sns.kdeplot(
+                            df[xlabels[i]][df[column_name] == value], 
+                            ax=self.axes[j, i], 
+                            color=legend_color[num], 
+                            legend=False, 
+                            shade=True,
+                        )
 
                 # Set plot labels, only set the outter plots to avoid label overlapping
                 if i == 0:
