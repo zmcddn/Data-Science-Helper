@@ -21,10 +21,10 @@ def prepare_data(df):
     input: raw data frame
     output: data frame with encoded categorical data and without any null data
     """
-    
+
     label = LabelEncoder()
 
-    start_message = "\nPrepare to plot pair plots ..."
+    start_message = "\nPrepare data for plotting ..."
     pub.sendMessage("LOG_MESSAGE", log_message=start_message)
     _spacing = " " * 7
 

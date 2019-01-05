@@ -374,7 +374,7 @@ class ColumnSelectionPanel(wx.Panel):
             pub.sendMessage("UPDATE_DF", df=_updated_df)
 
             # log action
-            _log_message = "Column disabled: {}".format(column_name)
+            _log_message = "\nColumn disabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
             # Update displayed columns
@@ -395,7 +395,7 @@ class ColumnSelectionPanel(wx.Panel):
             pub.sendMessage("UPDATE_DF", df=_updated_df)
 
             # log action
-            _log_message = "Column enabled: {}".format(column_name)
+            _log_message = "\nColumn enabled: {}".format(column_name)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
             # Update displayed columns
