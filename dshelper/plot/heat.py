@@ -249,7 +249,7 @@ class HeatPanel(wx.Panel):
                 df = prepare_data(self.df[self.available_columns])
                 colormap = sns.diverging_palette(220, 10, as_cmap=True)
 
-                _ = sns.heatmap(
+                h = sns.heatmap(
                     df.corr(),
                     cmap=colormap,
                     square=True,
@@ -259,8 +259,18 @@ class HeatPanel(wx.Panel):
                     linewidths=0.1,
                     vmax=1.0,
                     linecolor="white",
-                    annot_kws={"fontsize": 12},
+                    annot_kws={"fontsize": 8},
                 )
+
+                # Rotate the tick labels and set their alignment.
+                h.set_xticklabels(
+                    h.get_xticklabels(), 
+                    rotation=45, 
+                    ha="right",
+                    rotation_mode="anchor",
+                )
+                h.set_yticklabels(h.get_yticklabels(), rotation="horizontal")
+
                 self.canvas.draw()
                 self.has_correlation_plot = True
 
