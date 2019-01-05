@@ -344,6 +344,15 @@ class MainFrame(wx.Frame):
 
     def OnCloseWindow(self, event):
         self.Destroy()
+
+        if "win32" in sys.platform:
+            # Fix system related error: 
+            # forrtl: error (200): program aborting due to control-C event
+            import win32api
+            def doSaneThing(sig, func=None):
+                return True
+            win32api.SetConsoleCtrlHandler(doSaneThing, 1)
+
         self.app.ExitMainLoop()
 
 
