@@ -301,8 +301,10 @@ class MainFrame(wx.Frame):
     Main frame to display all the content
     """
 
-    def __init__(self, df):
+    def __init__(self, df, app=None):
         wx.Frame.__init__(self, None, -1, title="Data Science Helper")
+
+        self.app = app
 
         if df is not None:
             self.df = prepare_df(df)
@@ -342,7 +344,7 @@ class MainFrame(wx.Frame):
 
     def OnCloseWindow(self, event):
         self.Destroy()
-        sys.exit(0)
+        self.app.ExitMainLoop()
 
 
 def prepare_df(df):
@@ -367,7 +369,7 @@ def dshelp(df):
     """
 
     app = wx.App()
-    frame = MainFrame(df)
+    frame = MainFrame(df, app)
     app.MainLoop()
 
 
