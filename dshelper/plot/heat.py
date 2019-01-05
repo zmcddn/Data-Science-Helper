@@ -62,6 +62,7 @@ class HeatPanel(wx.Panel):
         )
         self.correlation_toolbar = NavigationToolbar(self.correlation_canvas)
         self.has_correlation_plot = False  # Flag for correlation plot
+        self.correlation_color_bar = False  # Flag for correlation color bar
 
         # Drop-down select boxes
         self.text_y_axis = wx.StaticText(self.buttonpanel, label='Y Axis:')
@@ -236,6 +237,8 @@ class HeatPanel(wx.Panel):
             self.column1.Append(column)
             self.column2.Append(column)
 
+        self.has_correlation_plot = False
+
     def correlation_heatmap(self, event):
         if self.correlation_button.GetValue() == True:
             # Show correlation plot
@@ -260,6 +263,7 @@ class HeatPanel(wx.Panel):
                     vmax=1.0,
                     linecolor="white",
                     annot_kws={"fontsize": 8},
+                    cbar=False if self.correlation_color_bar else True,
                 )
 
                 # Rotate the tick labels and set their alignment.
@@ -271,8 +275,10 @@ class HeatPanel(wx.Panel):
                 )
                 h.set_yticklabels(h.get_yticklabels(), rotation="horizontal")
 
-                self.canvas.draw()
+                self.correlation_canvas.draw()
+                self.Refresh()
                 self.has_correlation_plot = True
+                self.correlation_color_bar = True # Set to True after initial plot
 
         if self.correlation_button.GetValue() == False:
             # Hide correlation plot
