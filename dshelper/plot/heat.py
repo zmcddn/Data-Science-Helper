@@ -25,6 +25,7 @@ from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
 import matplotlib.cm as cm
 
+from .utils import prepare_data
 
 
 class HeatPanel(wx.Panel):
@@ -245,7 +246,7 @@ class HeatPanel(wx.Panel):
             if not self.has_correlation_plot:
                 # Plot correlation heatmap
                 self.correlation_axes.clear()
-                df = self.df[self.available_columns]
+                df = prepare_data(self.df[self.available_columns])
                 colormap = sns.diverging_palette(220, 10, as_cmap=True)
 
                 _ = sns.heatmap(
