@@ -84,6 +84,9 @@ class PairPanel(wx.Panel):
         # Reset plot, clean the axes
         self.figure.clf()
 
+        legend_labels = self.df[column_name].unique()
+        legend_title = column_name
+
         df = prepare_data(self.df[self.available_columns])
 
         if str(self.df[column_name].dtype) == "object":
@@ -178,10 +181,18 @@ class PairPanel(wx.Panel):
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
 
+        handles, _ = self.axes[0,0].get_legend_handles_labels()
+        self.figure.legend(
+            handles, 
+            labels=legend_labels, 
+            title=legend_title, 
+            loc='center right',
+        )
+
         self.figure.subplots_adjust(
             left=0.03, # the left side of the subplots of the figure
             bottom=0.08, # the bottom of the subplots of the figure
-            right=0.99, # the right side of the subplots of the figure
+            right=0.93, # the right side of the subplots of the figure
             top=0.97,   # the top of the subplots of the figure
             wspace=0.12, # the amount of width reserved for space between subplots
             hspace=0.12, # the amount of height reserved for space between subplots
