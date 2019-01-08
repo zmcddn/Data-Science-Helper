@@ -232,6 +232,8 @@ class HeatPanel(wx.Panel):
         self.axes.set_title("Heat Map Plot for {} and {}".format(column1, column2))
         self.axes.set_ylabel(column2)
         self.axes.set_xlabel(column1)
+        # # Hide grid lines
+        # self.axes.grid(False)
         self.color_bar = self.figure.colorbar(im, ax=self.axes)
         self.canvas.draw()
 
