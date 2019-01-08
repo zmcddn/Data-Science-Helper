@@ -137,56 +137,62 @@ class HeatPanel(wx.Panel):
         if self.color_bar:
             self.color_bar.remove()
 
-        # Check data type
-        if data1.dtype == "object":
-            new_df_1 = self.df.assign(
-                id=(self.df[column1]).astype('category').cat.codes
-            )
-            data1 = new_df_1["id"]
+        try:
+            # Check data type
+            if data1.dtype == "object":
+                new_df_1 = self.df.assign(
+                    id=(self.df[column1]).astype('category').cat.codes
+                )
+                data1 = new_df_1["id"]
 
-            # Set axis label with respect the content of the column
-            labels_x = list(pd.unique(new_df_1[column1].values))
-            label_pos_x = list(pd.unique(new_df_1["id"].values))
+                # Set axis label with respect the content of the column
+                labels_x = list(pd.unique(new_df_1[column1].values))
+                label_pos_x = list(pd.unique(new_df_1["id"].values))
 
-            def format_fn_x(tick_val, tick_pos):
-                if int(tick_val) in data1.values:
-                    return labels_x[label_pos_x.index(int(tick_val))]
-                else:
-                    return ''
-            self.axes.xaxis.set_major_formatter(FuncFormatter(format_fn_x))
-            self.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
+                def format_fn_x(tick_val, tick_pos):
+                    if int(tick_val) in data1.values:
+                        return labels_x[label_pos_x.index(int(tick_val))]
+                    else:
+                        return ''
+                self.axes.xaxis.set_major_formatter(FuncFormatter(format_fn_x))
+                self.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-            # Fill categorical data with mode
-            data1.fillna(data1.mode(), inplace=True) 
-        else:
-            # Fill numerical data with median
-            data1.fillna(data1.median(), inplace=True) 
+                # Fill categorical data with mode
+                data1.fillna(data1.mode(), inplace=True) 
+            else:
+                # Fill numerical data with median
+                data1.fillna(data1.median(), inplace=True) 
 
-        if data2.dtype == "object":
-            new_df_2 = self.df.assign(
-                id=(self.df[column2]).astype('category').cat.codes
-            )
-            data2 = new_df_2["id"]
+            if data2.dtype == "object":
+                new_df_2 = self.df.assign(
+                    id=(self.df[column2]).astype('category').cat.codes
+                )
+                data2 = new_df_2["id"]
 
-            # Set axis label with respect the content of the column
-            labels_y = list(pd.unique(new_df_2[column2].values))
-            label_pos_y = list(pd.unique(new_df_2["id"].values))
+                # Set axis label with respect the content of the column
+                labels_y = list(pd.unique(new_df_2[column2].values))
+                label_pos_y = list(pd.unique(new_df_2["id"].values))
 
-            def format_fn_y(tick_val, tick_pos):
-                if int(tick_val) in data2.values:
-                    return labels_y[label_pos_y.index(int(tick_val))]
-                else:
-                    return ''
-            self.axes.yaxis.set_major_formatter(FuncFormatter(format_fn_y))
-            self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+                def format_fn_y(tick_val, tick_pos):
+                    if int(tick_val) in data2.values:
+                        return labels_y[label_pos_y.index(int(tick_val))]
+                    else:
+                        return ''
+                self.axes.yaxis.set_major_formatter(FuncFormatter(format_fn_y))
+                self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-            # Fill categorical data with mode
-            data2.fillna(data2.mode(), inplace=True)
-        else:
-            # Fill numerical data with median
-            data2.fillna(data2.median(), inplace=True)
+                # Fill categorical data with mode
+                data2.fillna(data2.mode(), inplace=True)
+            else:
+                # Fill numerical data with median
+                data2.fillna(data2.median(), inplace=True)
 
-        heatmap = self.axes.hist2d(data1, data2, cmap=cm.tab20c, cmin=1)
+            heatmap = self.axes.hist2d(data1, data2, cmap=cm.tab20c, cmin=1)
+        
+        except ValueError as e:
+            # log Error
+            _log_message = "\nHeatmap plot failed due to error:\n--> {}".format(e)
+            pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         # # Adds cross marks for null values
         # self.axes.patch.set(hatch='xx', edgecolor='black')
