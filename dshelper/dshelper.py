@@ -34,6 +34,12 @@ except ImportError:
     )
     from plot.plot_panel import PlotPanel
 
+# Python 2 compatibility
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
 GRID_LINE_COLOUR = "#D3D3D3"
