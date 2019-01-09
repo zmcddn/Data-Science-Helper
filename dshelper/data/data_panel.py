@@ -33,7 +33,11 @@ GRID_LINE_COLOUR = "#D3D3D3"
 
 class DataTable(GRID_TABLE_CONSTRUCTOR):
     """
-    A grid table to show dataframe 
+    A grid table to show dataframe
+
+    Args:
+        data --> pandas dataframe: the df to be shown
+    Returns: None
     """
 
     def __init__(self, data=None):
@@ -143,6 +147,10 @@ class DataTable(GRID_TABLE_CONSTRUCTOR):
 class DataTablePanel(wx.Panel):
     """
     A panel displays the data in tabular format
+
+    Args:
+        df --> pandas dataframe: passed internally
+    Returns: None
     """
 
     def __init__(self, parent, id, df=None):
@@ -176,13 +184,25 @@ class DataTablePanel(wx.Panel):
         pub.subscribe(self._update_data, "UPDATE_DF")
 
     def OnColMove(self, evt):
-        # Draging column
+        """
+        Function responds to dragging column header.
+        """
+
         colId = evt.GetCol()
         colPos = self.grid.GetColPos(colId)
         wx.CallAfter(self.OnColMoved, colId, colPos)
         # allow the move to complete
 
     def OnColMoved(self, colId, oldPos):
+        """
+        Function calculates where the column is dragged and droped.
+
+        Args:
+            colId: the column id in wxpython
+            oldPos: the original column index before dragged
+        Returns: None
+        """
+
         cols = list(self.df.columns)
 
         # once the move is done, GetColPos() returns the new position
@@ -225,7 +245,14 @@ class DataTablePanel(wx.Panel):
             self._update_data(df)
 
     def _update_data(self, df):
-        # Update the dataframe for display
+        """
+        Updates the displayed dataframe with new locations of columns.
+
+        Args:
+            df --> pandas dataframe: df with differnt column order to be displayed
+        Returns: None
+        """
+
         self.df = df
 
         table = DataTable(self.df)
@@ -242,7 +269,11 @@ class DataTablePanel(wx.Panel):
 
 class DataDescribePanel(wx.Panel):
     """
-    A panel specifically for displaying data frame descriptive statistics
+    A panel for displaying data frame descriptive statistics (i.e. df.describe())
+
+    Args:
+        df --> pandas dataframe: pandas dataframe
+    Returns: None
     """
 
     def __init__(self, parent, id, df=None):
@@ -270,7 +301,7 @@ class DataDescribePanel(wx.Panel):
 
 class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
     """
-    A listCtrl object showing all the columns 
+    A listCtrl object to enable auto-with for all columns.
     """
 
     def __init__(self, parent, *args, **kw):
@@ -291,7 +322,13 @@ class ColumnSelectionList(wx.ListCtrl, wx.lib.mixins.listctrl.ListCtrlAutoWidthM
 
 
 class ColumnSelectionPanel(wx.Panel):
-    """A panel shows the data column info"""
+    """
+    A panel shows the data column info
+
+    Args:
+        df --> pandas dataframe: pandas dataframe
+    Returns: None
+    """
 
     def __init__(self, parent, id, df=None):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
@@ -358,7 +395,10 @@ class ColumnSelectionPanel(wx.Panel):
         pub.subscribe(self._update_column, "UPDATE_COLUMNS")
 
     def left_click(self, event):
-        # Left click on the row to select or deselect a column
+        """
+        Responds to button left click on the row to select or deselect a column
+        """
+
         item = event.GetItem()
         column_name = item.GetText()
 
@@ -406,7 +446,16 @@ class ColumnSelectionPanel(wx.Panel):
         self.column_list.Select(event.GetIndex(), on=0)  # De-select row
 
     def get_insert_index(self, column_name):
-        # get the index for insertion for any given column name
+        """
+        Function to get the inset index for any given column name
+
+        Args:
+            column_name --> string: the column name in df
+        Returns: 
+            column_index --> int: the index where the column is inserted
+            index_found --> bool: a flag shows whether the index is found
+        """
+
         _column_index = self.original_columns.index(column_name)
         index_found = False
         if _column_index == 0:
@@ -437,6 +486,17 @@ class ColumnSelectionPanel(wx.Panel):
         return column_index, index_found
 
     def _update_column(self, columns, old_position, new_position):
+        """
+        An internal helper function to update the column positions for 
+        drag-and-drop action.
+
+        Args:
+            columns --> list: pandas df column header list
+            old_position --> int: original column position before dragging
+            new_position --> int: new column position after dropping
+        Returns: None
+        """
+        
         if columns == self.original_df.shape[1]:
             # case for re-arrangement without hidden columns
 

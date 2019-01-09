@@ -77,6 +77,10 @@ def get_df():
 
 
 class LogPanel(wx.Panel):
+    """
+    A panel displays the system logs.
+    """
+
     def __init__(self, parent, id):
         wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
@@ -98,13 +102,29 @@ class LogPanel(wx.Panel):
         pub.subscribe(self.PrintMessage, "LOG_MESSAGE")
 
     def PrintMessage(self, log_message):
+        """
+        The main funciton used to receive all the messages from different 
+        panels among the software, and display the messages in the log panel.
+
+        Args: 
+            log_message --> string: the message needs to be displayed
+        Returns: None
+        Raises: None
+        """
+
         self.log.write(log_message)
         self.log.write("\n")
 
 
 class DFSplitterPanel(wx.Panel):
     """
-    A top and bottom splitter panel to display dataframe data and summary (i.e. df.describe)
+    A top and bottom splitter panel to display dataframe data in the 
+    top panel and summary of the data (i.e. df.describe) in the bottom 
+    panel. 
+
+    Args: 
+        df --> pandas dataframe: df passed internally for inspection
+    Return: None
     """
 
     def __init__(self, parent, df=None):
@@ -152,6 +172,14 @@ class DFSplitterPanel(wx.Panel):
         pub.subscribe(self.hide_show_bottom_panel, "BOTTOM_PANEL")
 
     def hide_show_bottom_panel(self, status):
+        """
+        A button function to show/hide bottom panel (i.e. dataframe summary)
+
+        Args:
+            status --> string: the flag sent by clicking the button
+        Returns: None
+        """
+
         if status == "hide":
             self.splitter.Unsplit(self.bottomPanel)
 
@@ -161,7 +189,12 @@ class DFSplitterPanel(wx.Panel):
 
 class SideSplitterPanel(wx.Panel):
     """
-    A left and right splitter panel to display the dataframe and log/stats
+    A left and right splitter panel to display the dataframe in the left panel
+    and log/stats in the right panel.
+
+    Args: 
+        df --> pandas dataframe: df passed internally for inspection
+    Return: None
     """
 
     def __init__(self, parent, df=None):
@@ -203,6 +236,14 @@ class SideSplitterPanel(wx.Panel):
         pub.subscribe(self.hide_show_right_panel, "RIGHT_PANEL")
 
     def hide_show_right_panel(self, status):
+        """
+        A button function to show/hide right panel (i.e. column stats/logs)
+
+        Args:
+            status --> string: the flag sent by clicking the button
+        Returns: None
+        """
+
         if status == "hide":
             self.splitter.Unsplit(self.rightPanel)
 
@@ -212,7 +253,11 @@ class SideSplitterPanel(wx.Panel):
 
 class MyStatusBar(wx.StatusBar):
     """
-    Custom status bar for extra functioning bnuttons
+    Custom status bar for positioning extra functioning bnuttons inside the 
+    status bar.
+
+    Args: None
+    Returns: None
     """
 
     def __init__(self, parent):
@@ -273,6 +318,11 @@ class MyStatusBar(wx.StatusBar):
         self.sizeChanged = False
 
     def hide_show_panels(self, event):
+        """
+        One button function that responds to two buttons clicking event.
+        Each button's clicking event is captured and turn to its own function.
+        """
+
         # Function for bottom panel
         if self.hide_show_bottom.GetValue() == True:
             # Hide bottom panel
@@ -305,6 +355,10 @@ class MyStatusBar(wx.StatusBar):
 class MainFrame(wx.Frame):
     """
     Main frame to display all the content
+
+    Args: 
+        df --> pandas dataframe: the df that you would like to inspect
+    Return: None
     """
 
     def __init__(self, df, app=None):
@@ -344,11 +398,22 @@ class MainFrame(wx.Frame):
         pub.subscribe(self.update_column_stat, "UPDATE_DF")
 
     def update_column_stat(self, df):
-        # update number of columns
+        """
+        Function to update the datafram column statistics in the status bar.
+
+        Args:
+            df --> pandas dataframe: pass internally to examine the number of cols
+        Returns: None
+        """
+
         cols = df.shape[1]
         self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
 
     def OnCloseWindow(self, event):
+        """
+        Event function respond to the close of the main GUI window.
+        """
+
         self.Destroy()
 
         if "win32" in sys.platform:
@@ -366,6 +431,11 @@ def prepare_df(df):
     """
     This function converts the df header into string format
     for the gui to be able to plot
+
+    Args:
+        df --> pandas dataframe: df needs to be cleaned
+    Return:
+        df --> pandas dataframe: cleaned df
     """
 
     columns = list(df.columns.values)
@@ -381,6 +451,10 @@ def prepare_df(df):
 def dshelp(df):
     """
     The function to run dshelper
+
+    Args:
+        df --> pandas dataframe: the df that you would like to inspect
+    Returns: None
     """
 
     app = wx.App()
