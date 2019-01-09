@@ -187,7 +187,7 @@ class HeatPanel(wx.Panel):
                 # Fill numerical data with median
                 data2.fillna(data2.median(), inplace=True)
 
-            heatmap = self.axes.hist2d(data1, data2, cmap=cm.tab20c, cmin=1)
+            heatmap = self.axes.hist2d(data1, data2, cmap="Wistia", cmin=1)
         
         except ValueError as e:
             # log Error
