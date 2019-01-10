@@ -18,8 +18,11 @@ def prepare_data(df):
         numerical data:
             fillna with median
 
-    input: raw data frame
-    output: data frame with encoded categorical data and without any null data
+    Args: 
+        df --> pandas dataframe: raw data frame
+        
+    Returns: 
+        df --> pandas dataframe: data frame cleaned with encoded categorical data and without any null data
     """
 
     label = LabelEncoder()

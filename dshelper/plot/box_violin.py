@@ -30,6 +30,11 @@ import matplotlib.cm as cm
 class BoxViolinPanel(wx.Panel):
     """
     A panel displays the box plot and violin for any given column
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
@@ -104,6 +109,12 @@ class BoxViolinPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
+        """
+        Function responses to select column from dropdown menu.
+        The plot is only triggered when all three columns are selected in the 
+        dropdown list
+        """
+
         selected_column_id_x = self.column_x.GetCurrentSelection()
         selcted_column_x = self.available_columns[selected_column_id_x]
 
@@ -121,6 +132,20 @@ class BoxViolinPanel(wx.Panel):
             )
 
     def draw_plots(self, column_x, column_y, column_hue):
+        """
+        Function that draws plot in the panel.
+
+        Args:
+            column_x --> 1D dataframe: dataframe column extracted from df 
+                (i.e. column_x = df[column_x_name]) as x axis data
+            column_y --> 1D dataframe: dataframe column extracted from df 
+                (i.e. column_y = df[column_y_name]) as y axis data
+            column_hue --> 1D dataframe: dataframe column extracted from df 
+                (i.e. column_hue = df[column_hue_name]) as legend data
+
+        Returns: None
+        """
+
         # Reset plot first
         self.box_axes.clear()
         self.violin_axes.clear()
@@ -153,6 +178,14 @@ class BoxViolinPanel(wx.Panel):
         self.violin_canvas.draw()
 
     def update_available_column(self, available_columns):
+        """
+        Update datafram used for plotting.
+
+        Args:
+            available_columns --> list: a list of available column headers
+        Returns: None
+        """
+        
         self.available_columns = available_columns
         self.column_x.Clear()
         self.column_y.Clear()

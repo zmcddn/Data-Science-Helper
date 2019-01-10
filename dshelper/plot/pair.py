@@ -32,6 +32,11 @@ from .utils import prepare_data
 class PairPanel(wx.Panel):
     """
     A panel displays the pair plots for any given column
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
@@ -67,6 +72,10 @@ class PairPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
+        """
+        Function responses to select column from dropdown menu.
+        """
+
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
         selcted_column = self.hue_columns[selected_column_id]
 
@@ -74,11 +83,20 @@ class PairPanel(wx.Panel):
 
     def draw_pair(self, column_name):
         """
-        Seaborn pairplot return a series of subplots within one figure,
-        therefore it is really difficult to plot it directly in the existing 
-        figure. Instead, we mimic how it is plotted and add corresponding 
-        number of matplotlib subplots and plot the pairplot inside the 
-        matplotlib subplots
+        Function that draws plot in the panel.
+
+        Note: 
+            Seaborn pairplot return a series of subplots within one figure,
+            therefore it is really difficult to plot it directly in the 
+            existing figure. 
+            Instead, we mimic how it is plotted and add corresponding 
+            number of matplotlib subplots and plot the pairplot inside the 
+            matplotlib subplots
+
+        Args:
+            column_name --> string: the name of the column that needs to 
+                be drawn
+        Returns: None
         """
 
         # Reset plot, clean the axes
@@ -210,10 +228,16 @@ class PairPanel(wx.Panel):
 
     def _get_hue_column(self):
         """
-        This function limits the available columns for hue selection.
+        This internal function limits the available columns for hue selection.
+        It filters out those columns with too many dinstinct values.
         
         Currently it is set for the number 6, which is the number of distinct 
         colors for the default seaborn color palette.
+
+        Args: None
+
+        Returns: 
+            hue_columns --> list: a list of column headers
         """
 
         hue_columns = []
@@ -225,6 +249,15 @@ class PairPanel(wx.Panel):
         return hue_columns
 
     def update_available_column(self, available_columns):
+        """
+        Update datafram used for plotting.
+
+        Args:
+            available_columns --> list: a list of available column headers
+            
+        Returns: None
+        """
+
         self.available_columns = available_columns
 
         # Update hue column selection

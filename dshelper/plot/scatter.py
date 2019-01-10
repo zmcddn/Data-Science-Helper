@@ -27,6 +27,11 @@ from matplotlib.figure import Figure
 class ScatterPanel(wx.Panel):
     """
     A panel displays the scatter plot for any given column
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+        
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
@@ -68,6 +73,11 @@ class ScatterPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
+        """
+        Function responses to select column from dropdown menu. 
+        It only triggers plot when both columns are selected from the dropdown menu
+        """
+
         selected_column_id_x = self.column_x.GetCurrentSelection()
         selcted_column_x = self.available_columns[selected_column_id_x]
 
@@ -83,6 +93,20 @@ class ScatterPanel(wx.Panel):
             )
 
     def draw_scatter(self, column_x, column_y, data_x, data_y):
+        """
+        Function that draws plot in the panel.
+
+        Args:
+            column_x --> string: column header for x axis
+            column_y --> string: column header for y axis
+            data_x --> 1D dataframe: dataframe column extracted from df 
+                (i.e. data_x = df[column_x]) as x axis data
+            data_y --> 1D dataframe: dataframe column extracted from df 
+                (i.e. data_y = df[column_y]) as y axis data
+
+        Returns: None
+        """
+
         # Reset plot forst
         self.axes.clear()
 
@@ -100,6 +124,15 @@ class ScatterPanel(wx.Panel):
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
+        """
+        Update datafram used for plotting.
+
+        Args:
+            available_columns --> list: a list of available column headers
+
+        Returns: None
+        """
+
         self.available_columns = available_columns
         self.column_x.Clear()
         self.column_y.Clear()

@@ -31,6 +31,11 @@ from .utils import prepare_data
 class HeatPanel(wx.Panel):
     """
     A panel displays the histogram plot for any given column
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
@@ -116,6 +121,11 @@ class HeatPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
+        """
+        Function responses to select column from dropdown menu.
+        It only triggers plot when both columns are selected from the dropdown menu
+        """
+
         selected_column_id_1 = self.column1.GetCurrentSelection()
         selcted_column_1 = self.available_columns[selected_column_id_1]
 
@@ -131,6 +141,20 @@ class HeatPanel(wx.Panel):
             )
 
     def draw_heat(self, column1, column2, data1, data2):
+        """
+        Function that draws plot in the panel.
+
+        Args:
+            column1 --> string: first column header
+            column2 --> string: second column header
+            data1 --> 1D dataframe: dataframe column extracted from df 
+                (i.e. data1 = df[column1])
+            data2 --> 1D dataframe: dataframe column extracted from df 
+                (i.e. data2 = df[column2])
+
+        Returns: None
+        """
+
         # Reset plot first
         self.axes.clear()
 
@@ -238,6 +262,15 @@ class HeatPanel(wx.Panel):
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
+        """
+        Update datafram used for plotting.
+
+        Args:
+            available_columns --> list: a list of available column headers
+
+        Returns: None
+        """
+
         self.available_columns = available_columns
         self.column1.Clear()
         self.column2.Clear()
@@ -248,6 +281,10 @@ class HeatPanel(wx.Panel):
         self.has_correlation_plot = False
 
     def correlation_heatmap(self, event):
+        """
+        Draws correlation plot based on the current dataframe
+        """
+        
         if self.correlation_button.GetValue() == True:
             # Show correlation plot
             self.splitter.SplitVertically(self.heatmap_panel, self.correlation_panel)

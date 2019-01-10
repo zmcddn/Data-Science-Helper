@@ -27,6 +27,11 @@ from matplotlib.figure import Figure
 class HistPanel(wx.Panel):
     """
     A panel displays the histogram plot for any given column
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
@@ -59,12 +64,28 @@ class HistPanel(wx.Panel):
         pub.subscribe(self.update_available_column, "UPDATE_DISPLAYED_COLUMNS")
 
     def column_selected(self, event):
+        """
+        Function responses to select column from dropdown menu.
+        """
+
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
         selcted_column = self.available_columns[selected_column_id]
 
         self.draw_hist(selcted_column, self.df[selcted_column])
 
     def draw_hist(self, column_name, data):
+        """
+        Function that draws plot in the panel.
+
+        Args:
+            column_name --> string: the name of the column that needs to 
+                be drawn
+            data --> 1D dataframe: dataframe column extracted from df 
+                (i.e. data = df[column_name])
+
+        Returns: None
+        """
+
         # Reset plot forst
         self.axes.clear()
 
@@ -87,6 +108,15 @@ class HistPanel(wx.Panel):
         self.canvas.draw()
 
     def update_available_column(self, available_columns):
+        """
+        Update datafram used for plotting.
+
+        Args:
+            available_columns --> list: a list of available column headers
+        
+        Returns: None
+        """
+
         self.available_columns = available_columns
         self.dropdown_menu.Clear()
         for column in self.available_columns:

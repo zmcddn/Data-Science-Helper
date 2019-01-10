@@ -24,7 +24,12 @@ from .scatter import ScatterPanel
 
 class PlotPanel(wx.Panel):
     """
-    A panel contains several plots
+    The main panel contains several plots
+
+    Args:
+        df --> pandas dataframe: passed internally for plotting
+        
+    Returns: None
     """
 
     def __init__(self, parent, df=None):
