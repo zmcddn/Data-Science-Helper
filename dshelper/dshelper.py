@@ -38,32 +38,27 @@ GRID_LINE_COLOUR = "#D3D3D3"
 
 
 def get_df():
-    # # Test dataframe
-    # todays_date = datetime.datetime.now().date()
-    # index = pd.date_range(
-    #     todays_date - datetime.timedelta(10), periods=10, freq="D"
-    # )
-    # df = pd.DataFrame(index=index, columns=list(range(30)))
-    # df = df.fillna(500)
-    # # df.reset_index(inplace=True)
-    # # df = pd.DataFrame(np.random.random((10, 5)))
+    # Initial dataframe
+    df = pd.DataFrame(
+        np.nan, index=list(range(30)), columns=['A','B','C','D','E','F','G']
+    )
 
-    try:
-        # Import as module, use absolute path
-        dir_path = os.path.abspath(os.path.dirname("train.csv"))
-        csv_filename = os.path.join(dir_path, "dshelper\\titanic_data\\train.csv")
-        df = pd.read_csv(csv_filename)
-    except FileNotFoundError:
-        # Run as function, use relative path
-        df = pd.read_csv("./titanic_data/train.csv")
+    # try:
+    #     # Import as module, use absolute path
+    #     dir_path = os.path.abspath(os.path.dirname("train.csv"))
+    #     csv_filename = os.path.join(dir_path, "dshelper\\titanic_data\\train.csv")
+    #     df = pd.read_csv(csv_filename)
+    # except FileNotFoundError:
+    #     # Run as function, use relative path
+    #     df = pd.read_csv("./titanic_data/train.csv")
 
-    # Insert some random dates into the df
-    random_dates = [
-        datetime.date(2016, 1, 1) + datetime.timedelta(days=int(days))
-        for days in np.random.randint(1, 50, df.shape[0])
-    ]
-    # Insert to df
-    df.insert(0, "Random Date", random_dates)
+    # # Insert some random dates into the df
+    # random_dates = [
+    #     datetime.date(2016, 1, 1) + datetime.timedelta(days=int(days))
+    #     for days in np.random.randint(1, 50, df.shape[0])
+    # ]
+    # # Insert to df
+    # df.insert(0, "Random Date", random_dates)
 
     return df
 
