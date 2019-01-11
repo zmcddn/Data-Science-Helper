@@ -20,7 +20,11 @@ import wx.grid
 from wx.lib.pubsub import pub
 
 # Local package imports
-import data, plot
+try:
+    from .data import data_panel as data
+    from .plot import plot_panel as plot 
+except (ModuleNotFoundError, ImportError):
+    import data, plot
 
 # Python 2 compatibility
 try:
@@ -458,4 +462,5 @@ def dshelp(df):
 
 
 if __name__ == "__main__":
-    dshelp(None)
+    import dshelper
+    dshelper.dshelp(None)

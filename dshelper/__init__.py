@@ -10,6 +10,7 @@ License: MIT (see LICENSE for details)
 from __future__ import absolute_import
 
 from .dshelper import dshelp
+from . import data, plot
 
 
 __version__ = "0.1.0"
