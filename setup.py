@@ -16,7 +16,8 @@ setup(
         'scipy>=1.0.0',
         'pandas>=0.22.0',
         'scikit-learn>=0.19.1',
-        'seaborn>=0.8.0'
+        'seaborn>=0.8.0',
+        'statsmodels>=0.8.0'
     ],
     zip_safe=False
 )
