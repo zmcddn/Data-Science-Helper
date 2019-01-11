@@ -9,7 +9,7 @@ License: MIT (see LICENSE for details)
 """
 from __future__ import absolute_import
 
-from dshelper.dshelper import dshelp
+from .dshelper import dshelp
 
 
 __version__ = "0.1.0"

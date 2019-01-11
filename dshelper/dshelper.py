@@ -19,20 +19,8 @@ import wx
 import wx.grid
 from wx.lib.pubsub import pub
 
-try:
-    from dshelper.data.data_panel import (
-        DataTablePanel,
-        DataDescribePanel,
-        ColumnSelectionPanel,
-    )
-    from dshelper.plot.plot_panel import PlotPanel
-except ImportError:
-    from data.data_panel import (
-        DataTablePanel,
-        DataDescribePanel,
-        ColumnSelectionPanel,
-    )
-    from plot.plot_panel import PlotPanel
+# Local package imports
+import data, plot
 
 # Python 2 compatibility
 try:
@@ -143,8 +131,8 @@ class DFSplitterPanel(wx.Panel):
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
         data_notebook = wx.Notebook(self.topPanel)
-        self.raw_data_page = DataTablePanel(data_notebook, -1, df=self.df)
-        self.plot_page = PlotPanel(data_notebook, df=self.df)
+        self.raw_data_page = data.DataTablePanel(data_notebook, -1, df=self.df)
+        self.plot_page = plot.PlotPanel(data_notebook, df=self.df)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
 
@@ -157,7 +145,9 @@ class DFSplitterPanel(wx.Panel):
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
         self.topPanel.SetSizer(sizer)
 
-        self.data_describe = DataDescribePanel(self.bottomPanel, -1, df=self.df)
+        self.data_describe = data.DataDescribePanel(
+            self.bottomPanel, -1, df=self.df
+        )
         bottom_sizer = wx.BoxSizer()
         bottom_sizer.Add(self.data_describe, 1, wx.EXPAND | wx.SP_NOBORDER)
         self.bottomPanel.SetSizer(bottom_sizer)
@@ -215,7 +205,9 @@ class SideSplitterPanel(wx.Panel):
         # each page serves a different function
         data_notebook = wx.Notebook(self.rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
-        self.column_page = ColumnSelectionPanel(data_notebook, -1, df=self.df)
+        self.column_page = data.ColumnSelectionPanel(
+            data_notebook, -1, df=self.df
+        )
         self.log_page = LogPanel(data_notebook, -1)
 
         # Add pages into the notebook for display
