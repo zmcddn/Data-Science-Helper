@@ -419,10 +419,13 @@ class MainFrame(wx.Frame):
         if "win32" in sys.platform:
             # Fix system related error: 
             # forrtl: error (200): program aborting due to control-C event
-            import win32api
-            def doSaneThing(sig, func=None):
-                return True
-            win32api.SetConsoleCtrlHandler(doSaneThing, 1)
+            try:
+                import win32api
+                def doSaneThing(sig, func=None):
+                    return True
+                win32api.SetConsoleCtrlHandler(doSaneThing, 1)
+            except ModuleNotFoundError:
+                pass
 
         self.app.ExitMainLoop()
 
