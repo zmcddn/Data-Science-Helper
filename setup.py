@@ -8,7 +8,11 @@ setup(
     author='Minchang (Carson) Zhang',
     author_email='minchang@ualberta.ca',
     license='MIT',
-    packages=['dshelper'],
+    packages=[
+        'dshelper',
+        'dshelper.data',
+        'dshelper.plot',
+    ],
     install_requires=[
         'wxpython>=3.0',
         'matplotlib>=2.1.2',
