@@ -82,6 +82,11 @@ For help with any dataframe, you can follow the following steps:
 * `import dshelper`
 * `dshelper.dshelp(df)`
 
+
+## How to use in Jupyter Notebook
+
+- For running in Jupyter Notebook you need to add `%gui wx` at the top of the file for the GUI to display properly
+
 ## Run with docker
 
 * `make build` to build the project
