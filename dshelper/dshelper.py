@@ -174,7 +174,6 @@ class SideSplitterPanel(wx.Panel):
     """
 
     def __init__(self, parent, df=None):
-        """Constructor"""
         wx.Panel.__init__(self, parent)
 
         self.df = df
@@ -238,19 +237,20 @@ class MyStatusBar(wx.StatusBar):
     Returns: None
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, memory_usage):
         wx.StatusBar.__init__(self, parent)
 
         self.SetFieldsCount(5)
-        self.SetStatusWidths([200, 200, -1, 200, 200])
+        self.SetStatusWidths([80, 120, -1, 200, 200])
         self.sizeChanged = False
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_IDLE, self.OnIdle)
 
-        # Text fields with intial content
+        # Text fields with initial content
         self.SetStatusText("some text", 0)
         self.SetStatusText("some text", 1)
-        self.SetStatusText("some text", 2)
+        self.memory = wx.StaticText(self, -1, f" Memory Usage: {memory_usage}")
+        self.memory.SetForegroundColour("blue")
 
         # Field for buttons
         self.hide_show_bottom = wx.ToggleButton(self, -1, "Hide Bottom Panel")
@@ -283,11 +283,21 @@ class MyStatusBar(wx.StatusBar):
 
     # reposition the buttons
     def Reposition(self):
+        """Reposition for widgets"""
+
+        # Static text (memory usage)
+        rect0 = self.GetFieldRect(2)
+        rect0.x += 1
+        rect0.y += 1
+        self.memory.SetRect(rect0)
+
+        # Button (hide show bottom panel)
         rect1 = self.GetFieldRect(3)
         rect1.x += 1
         rect1.y += 1
         self.hide_show_bottom.SetRect(rect1)
 
+        # Button (hide show side panel)
         rect2 = self.GetFieldRect(4)
         rect2.x += 1
         rect2.y += 1
@@ -358,14 +368,13 @@ class MainFrame(wx.Frame):
             memory_usage = "{:.2f} KB".format(_memory_use)
 
         # set custom status bar
-        self.status_bar = MyStatusBar(self)
+        self.status_bar = MyStatusBar(self, memory_usage)
         self.SetStatusBar(self.status_bar)
 
         self.main_splitter = SideSplitterPanel(self, df=self.df)
 
         self.status_bar.SetStatusText(" Rows: {}".format(rows), 0)
         self.status_bar.SetStatusText(" Columns: {}".format(cols), 1)
-        self.status_bar.SetStatusText(" Memory Usage: {}".format(memory_usage), 2)
 
         self.Refresh()
         self.Show()
@@ -377,7 +386,7 @@ class MainFrame(wx.Frame):
 
     def update_column_stat(self, df):
         """
-        Function to update the datafram column statistics in the status bar.
+        Function to update the dataframe column statistics in the status bar.
 
         Args:
             df --> pandas dataframe: pass internally to examine the number of cols

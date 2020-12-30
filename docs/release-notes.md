@@ -5,6 +5,7 @@
 ### Features
 
 ⬆️ Upgraded package versions
+⬆️ Highlighted memory usage in status bar
 
 ### Fixes
 
