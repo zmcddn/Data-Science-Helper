@@ -231,7 +231,7 @@ class SideSplitterPanel(wx.Panel):
 
 class MyStatusBar(wx.StatusBar):
     """
-    Custom status bar for positioning extra functioning bnuttons inside the
+    Custom status bar for positioning extra functioning buttons inside the
     status bar.
 
     Args: None
