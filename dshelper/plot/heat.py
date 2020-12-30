@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import matplotlib
 if 'linux' not in sys.platform:
@@ -107,7 +107,7 @@ class HeatPanel(wx.Panel):
         button_sizer.Add(self.text_y_axis, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(self.column2, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         button_sizer.Add(
-            self.correlation_button, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 2
+            self.correlation_button, 0, wx.EXPAND | wx.ALL, 2
         )
         self.buttonpanel.SetSizer(button_sizer)
 
@@ -147,9 +147,9 @@ class HeatPanel(wx.Panel):
         Args:
             column1 --> string: first column header
             column2 --> string: second column header
-            data1 --> 1D dataframe: dataframe column extracted from df 
+            data1 --> 1D dataframe: dataframe column extracted from df
                 (i.e. data1 = df[column1])
-            data2 --> 1D dataframe: dataframe column extracted from df 
+            data2 --> 1D dataframe: dataframe column extracted from df
                 (i.e. data2 = df[column2])
 
         Returns: None
@@ -182,10 +182,10 @@ class HeatPanel(wx.Panel):
                 self.axes.xaxis.set_major_locator(MaxNLocator(integer=True))
 
                 # Fill categorical data with mode
-                data1.fillna(data1.mode(), inplace=True) 
+                data1.fillna(data1.mode(), inplace=True)
             else:
                 # Fill numerical data with median
-                data1.fillna(data1.median(), inplace=True) 
+                data1.fillna(data1.median(), inplace=True)
 
             if data2.dtype == "object":
                 new_df_2 = self.df.assign(
@@ -212,7 +212,7 @@ class HeatPanel(wx.Panel):
                 data2.fillna(data2.median(), inplace=True)
 
             heatmap = self.axes.hist2d(data1, data2, cmap="Wistia", cmin=1)
-        
+
         except ValueError as e:
             # log Error
             _log_message = "\nHeatmap plot failed due to error:\n--> {}".format(e)
@@ -235,20 +235,20 @@ class HeatPanel(wx.Panel):
                 # Do no display nan value
                 if not np.isnan(hist[i,j]):
                     self.axes.text(
-                        x=xbins[i]+x_middle_offset, 
-                        y=ybins[j]+y_middle_offset, 
-                        s=hist[i,j], 
+                        x=xbins[i]+x_middle_offset,
+                        y=ybins[j]+y_middle_offset,
+                        s=hist[i,j],
                         color="b",
                         ha="center",
                         va="center",
                     )
                 else:
                     self.axes.text(
-                        x=xbins[i], 
-                        y=ybins[j], 
-                        s="", 
-                        color="b", 
-                        ha="center", 
+                        x=xbins[i],
+                        y=ybins[j],
+                        s="",
+                        color="b",
+                        ha="center",
                         va="center",
                     )
 
@@ -284,7 +284,7 @@ class HeatPanel(wx.Panel):
         """
         Draws correlation plot based on the current dataframe
         """
-        
+
         if self.correlation_button.GetValue() == True:
             # Show correlation plot
             self.splitter.SplitVertically(self.heatmap_panel, self.correlation_panel)
@@ -313,8 +313,8 @@ class HeatPanel(wx.Panel):
 
                 # Rotate the tick labels and set their alignment.
                 h.set_xticklabels(
-                    h.get_xticklabels(), 
-                    rotation=45, 
+                    h.get_xticklabels(),
+                    rotation=45,
                     ha="right",
                     rotation_mode="anchor",
                 )

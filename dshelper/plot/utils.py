@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -12,16 +12,16 @@ def prepare_data(df):
     A helper function to prepare the data for plot.
 
     The way it cleans follows the standard data science way of cleaning:
-        categorical data: 
+        categorical data:
             encode with LabelEncoder
             fillna with mode
         numerical data:
             fillna with median
 
-    Args: 
+    Args:
         df --> pandas dataframe: raw data frame
-        
-    Returns: 
+
+    Returns:
         df --> pandas dataframe: data frame cleaned with encoded categorical data and without any null data
     """
 

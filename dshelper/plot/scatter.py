@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import matplotlib
 if 'linux' not in sys.platform:
@@ -30,7 +30,7 @@ class ScatterPanel(wx.Panel):
 
     Args:
         df --> pandas dataframe: passed internally for plotting
-        
+
     Returns: None
     """
 
@@ -74,7 +74,7 @@ class ScatterPanel(wx.Panel):
 
     def column_selected(self, event):
         """
-        Function responses to select column from dropdown menu. 
+        Function responses to select column from dropdown menu.
         It only triggers plot when both columns are selected from the dropdown menu
         """
 
@@ -99,9 +99,9 @@ class ScatterPanel(wx.Panel):
         Args:
             column_x --> string: column header for x axis
             column_y --> string: column header for y axis
-            data_x --> 1D dataframe: dataframe column extracted from df 
+            data_x --> 1D dataframe: dataframe column extracted from df
                 (i.e. data_x = df[column_x]) as x axis data
-            data_y --> 1D dataframe: dataframe column extracted from df 
+            data_y --> 1D dataframe: dataframe column extracted from df
                 (i.e. data_y = df[column_y]) as y axis data
 
         Returns: None

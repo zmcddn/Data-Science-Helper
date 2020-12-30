@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-dshelper is a GUI for visualization of pandas dataframes. 
-In addition, it provides some functionalities in helping with some exploratory 
+dshelper is a GUI for visualization of pandas dataframes.
+In addition, it provides some functionalities in helping with some exploratory
 analysis and examination of raw data
 
 Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
@@ -18,7 +18,7 @@ import numpy as np
 import wx
 import wx.grid
 import wx.lib.mixins.listctrl
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 if int(wx.__version__[0]) < 4:
     # Add compatibility with wxpython 3.*
@@ -451,7 +451,7 @@ class ColumnSelectionPanel(wx.Panel):
 
         Args:
             column_name --> string: the column name in df
-        Returns: 
+        Returns:
             column_index --> int: the index where the column is inserted
             index_found --> bool: a flag shows whether the index is found
         """
@@ -487,7 +487,7 @@ class ColumnSelectionPanel(wx.Panel):
 
     def _update_column(self, columns, old_position, new_position):
         """
-        An internal helper function to update the column positions for 
+        An internal helper function to update the column positions for
         drag-and-drop action.
 
         Args:
@@ -496,7 +496,7 @@ class ColumnSelectionPanel(wx.Panel):
             new_position --> int: new column position after dropping
         Returns: None
         """
-        
+
         if columns == self.original_df.shape[1]:
             # case for re-arrangement without hidden columns
 

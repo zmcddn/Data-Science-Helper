@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import matplotlib
 if 'linux' not in sys.platform:
@@ -111,7 +111,7 @@ class BoxViolinPanel(wx.Panel):
     def column_selected(self, event):
         """
         Function responses to select column from dropdown menu.
-        The plot is only triggered when all three columns are selected in the 
+        The plot is only triggered when all three columns are selected in the
         dropdown list
         """
 
@@ -136,11 +136,11 @@ class BoxViolinPanel(wx.Panel):
         Function that draws plot in the panel.
 
         Args:
-            column_x --> 1D dataframe: dataframe column extracted from df 
+            column_x --> 1D dataframe: dataframe column extracted from df
                 (i.e. column_x = df[column_x_name]) as x axis data
-            column_y --> 1D dataframe: dataframe column extracted from df 
+            column_y --> 1D dataframe: dataframe column extracted from df
                 (i.e. column_y = df[column_y_name]) as y axis data
-            column_hue --> 1D dataframe: dataframe column extracted from df 
+            column_hue --> 1D dataframe: dataframe column extracted from df
                 (i.e. column_hue = df[column_hue_name]) as legend data
 
         Returns: None
@@ -185,7 +185,7 @@ class BoxViolinPanel(wx.Panel):
             available_columns --> list: a list of available column headers
         Returns: None
         """
-        
+
         self.available_columns = available_columns
         self.column_x.Clear()
         self.column_y.Clear()

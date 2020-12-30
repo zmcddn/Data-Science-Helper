@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-dshelper is a GUI for visualization of pandas dataframes. 
+dshelper is a GUI for visualization of pandas dataframes.
 In addition, it provides some functionalities in helping with some exploratory analysis and examination of raw data
 
 Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
@@ -17,12 +17,12 @@ import numpy as np
 
 import wx
 import wx.grid
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 # Local package imports
 try:
     from .data import data_panel as data
-    from .plot import plot_panel as plot 
+    from .plot import plot_panel as plot
 except (ModuleNotFoundError, ImportError):
     import data, plot
 
@@ -90,10 +90,10 @@ class LogPanel(wx.Panel):
 
     def PrintMessage(self, log_message):
         """
-        The main funciton used to receive all the messages from different 
+        The main funciton used to receive all the messages from different
         panels among the software, and display the messages in the log panel.
 
-        Args: 
+        Args:
             log_message --> string: the message needs to be displayed
         Returns: None
         Raises: None
@@ -105,11 +105,11 @@ class LogPanel(wx.Panel):
 
 class DFSplitterPanel(wx.Panel):
     """
-    A top and bottom splitter panel to display dataframe data in the 
-    top panel and summary of the data (i.e. df.describe) in the bottom 
-    panel. 
+    A top and bottom splitter panel to display dataframe data in the
+    top panel and summary of the data (i.e. df.describe) in the bottom
+    panel.
 
-    Args: 
+    Args:
         df --> pandas dataframe: df passed internally for inspection
     Return: None
     """
@@ -181,7 +181,7 @@ class SideSplitterPanel(wx.Panel):
     A left and right splitter panel to display the dataframe in the left panel
     and log/stats in the right panel.
 
-    Args: 
+    Args:
         df --> pandas dataframe: df passed internally for inspection
     Return: None
     """
@@ -244,7 +244,7 @@ class SideSplitterPanel(wx.Panel):
 
 class MyStatusBar(wx.StatusBar):
     """
-    Custom status bar for positioning extra functioning bnuttons inside the 
+    Custom status bar for positioning extra functioning bnuttons inside the
     status bar.
 
     Args: None
@@ -347,7 +347,7 @@ class MainFrame(wx.Frame):
     """
     Main frame to display all the content
 
-    Args: 
+    Args:
         df --> pandas dataframe: the df that you would like to inspect
     Return: None
     """
@@ -406,9 +406,20 @@ class MainFrame(wx.Frame):
         """
 
         self.Destroy()
+        # event.Skip()
+
+        # # make sure that all is closed
+        # for item in wx.GetTopLevelWindows():
+        #     print(item, isinstance(item, MainFrame))
+        #     if isinstance(item, MainFrame):
+        #         item.Destroy()
+            # if not isinstance(item, MainFrame):
+            #     if isinstance(item, wx.Dialog):
+            #         item.Destroy()
+            #     item.Close()
 
         if "win32" in sys.platform:
-            # Fix system related error: 
+            # Fix system related error:
             # forrtl: error (200): program aborting due to control-C event
             try:
                 import win32api
@@ -417,7 +428,7 @@ class MainFrame(wx.Frame):
                 win32api.SetConsoleCtrlHandler(doSaneThing, 1)
             except ModuleNotFoundError:
                 pass
-
+        # # event.Skip()
         self.app.ExitMainLoop()
 
 

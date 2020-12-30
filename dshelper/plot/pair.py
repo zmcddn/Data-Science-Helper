@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import matplotlib
 if "linux" not in sys.platform:
@@ -85,16 +85,16 @@ class PairPanel(wx.Panel):
         """
         Function that draws plot in the panel.
 
-        Note: 
+        Note:
             Seaborn pairplot return a series of subplots within one figure,
-            therefore it is really difficult to plot it directly in the 
-            existing figure. 
-            Instead, we mimic how it is plotted and add corresponding 
-            number of matplotlib subplots and plot the pairplot inside the 
+            therefore it is really difficult to plot it directly in the
+            existing figure.
+            Instead, we mimic how it is plotted and add corresponding
+            number of matplotlib subplots and plot the pairplot inside the
             matplotlib subplots
 
         Args:
-            column_name --> string: the name of the column that needs to 
+            column_name --> string: the name of the column that needs to
                 be drawn
         Returns: None
         """
@@ -168,14 +168,14 @@ class PairPanel(wx.Panel):
                         # Diagnal locations, distribution plot
                         for num, value in enumerate(hue_values):
                             sns.kdeplot(
-                                df[xlabels[i]][df[column_name] == value], 
-                                ax=self.axes[j, i], 
-                                color=legend_color[num], 
-                                legend=False, 
+                                df[xlabels[i]][df[column_name] == value],
+                                ax=self.axes[j, i],
+                                color=legend_color[num],
+                                legend=False,
                                 shade=True,
                             )
 
-                    # Set plot labels, only set the outter plots to avoid 
+                    # Set plot labels, only set the outter plots to avoid
                     # label overlapping
                     if i == 0:
                         if j == len(xlabels) - 1:
@@ -203,9 +203,9 @@ class PairPanel(wx.Panel):
 
             handles, _ = self.axes[0,0].get_legend_handles_labels()
             self.figure.legend(
-                handles, 
-                labels=legend_labels, 
-                title=legend_title, 
+                handles,
+                labels=legend_labels,
+                title=legend_title,
                 loc='center right',
             )
 
@@ -230,13 +230,13 @@ class PairPanel(wx.Panel):
         """
         This internal function limits the available columns for hue selection.
         It filters out those columns with too many dinstinct values.
-        
-        Currently it is set for the number 6, which is the number of distinct 
+
+        Currently it is set for the number 6, which is the number of distinct
         colors for the default seaborn color palette.
 
         Args: None
 
-        Returns: 
+        Returns:
             hue_columns --> list: a list of column headers
         """
 
@@ -254,7 +254,7 @@ class PairPanel(wx.Panel):
 
         Args:
             available_columns --> list: a list of available column headers
-            
+
         Returns: None
         """
 

@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from numpy import arange, sin, pi
 
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 import matplotlib
 if 'linux' not in sys.platform:
@@ -78,9 +78,9 @@ class HistPanel(wx.Panel):
         Function that draws plot in the panel.
 
         Args:
-            column_name --> string: the name of the column that needs to 
+            column_name --> string: the name of the column that needs to
                 be drawn
-            data --> 1D dataframe: dataframe column extracted from df 
+            data --> 1D dataframe: dataframe column extracted from df
                 (i.e. data = df[column_name])
 
         Returns: None
@@ -113,7 +113,7 @@ class HistPanel(wx.Panel):
 
         Args:
             available_columns --> list: a list of available column headers
-        
+
         Returns: None
         """
 
