@@ -64,7 +64,7 @@ And below are a few plots:
 * seaborn
 * pandas
 * numpy
-* sciki-tlearn
+* scikit-learn
 * scipy
 * statsmodels
 
@@ -72,11 +72,11 @@ And below are a few plots:
 
 * `git clone git@github.com:zmcddn/Data-Science-Helper.git`
 * `conda create -n py36 python=3.6` or use virtualenv or pipenv
-* `activate py36` (windwos) or `source activate py36` (mac, linux)
+* `activate py36` (windows) or `source activate py36` (mac, linux)
 * `conda install --yes --file requirements.txt` or `pip install -r requirements.txt`
 * In case the `PyPubSub` is not installed with conda, you can do `pip install PyPubSub`
 * `cd dshelper`
-* `python dshelper.py` (windwos, linux) or `pythonw dshelper.py` (mac)
+* `python dshelper.py` (windows, linux) or `pythonw dshelper.py` (mac)
 
 For help with any dataframe, you can follow the following steps:
 * `import dshelper`
