@@ -124,7 +124,7 @@ class DFSplitterPanel(wx.Panel):
 
         # Add pages into the notebook for display
         data_notebook.AddPage(self.raw_data_page, "Raw Data")
-        data_notebook.AddPage(self.plot_page, "Plot")
+        data_notebook.AddPage(self.plot_page, "Plots")
 
         # Put the notebook in a sizer in the panel for layout
         sizer = wx.BoxSizer()
