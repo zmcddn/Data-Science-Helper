@@ -15,22 +15,22 @@ dshelper.dshelp(df)
 
 ## Feature
 
-✅ Default view with raw data and its statistics info
-✅ Drag on the header to re-arrange columns
-✅ Left click on the right panel to show/hide columns
-✅ Plots: histogram, heatmap, correlation, scatter, box, violin, pair 
-✅ Bottom right buttons to hide panels and focus on data set
-✅ Dockerized with make commands
+- ✅ Default view with raw data and its statistics info
+- ✅ Drag on the header to re-arrange columns
+- ✅ Left click on the right panel to show/hide columns
+- ✅ Plots: histogram, heatmap, correlation, scatter, box, violin, pair 
+- ✅ Bottom right buttons to hide panels and focus on data set
+- ✅ Dockerized with make commands
 
 ## Plots
 
-✅ Histogram
-✅ Heatmap
-✅ Correlation 
-✅ Scatter Plot
-✅ Box Plot
-✅ Violin Plot
-✅ Pair plot
+- ✅ Histogram
+- ✅ Heatmap
+- ✅ Correlation 
+- ✅ Scatter Plot
+- ✅ Box Plot
+- ✅ Violin Plot
+- ✅ Pair plot
 
 ## Demo with Titanic data
 
