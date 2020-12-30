@@ -28,7 +28,7 @@ class PlotPanel(wx.Panel):
 
     Args:
         df --> pandas dataframe: passed internally for plotting
-        
+
     Returns: None
     """
 
@@ -63,7 +63,7 @@ class PlotPanel(wx.Panel):
 
 
 if __name__ == "__main__":
-    # Test for indivial panel layout
+    # Test for individual panel layout
     app = wx.App(0)
     frame = wx.Frame(None, wx.ID_ANY)
     fa = CanvasPanel(frame)

@@ -77,9 +77,9 @@ class PairPanel(wx.Panel):
         """
 
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selcted_column = self.hue_columns[selected_column_id]
+        selected_column = self.hue_columns[selected_column_id]
 
-        self.draw_pair(selcted_column)
+        self.draw_pair(selected_column)
 
     def draw_pair(self, column_name):
         """
@@ -114,7 +114,7 @@ class PairPanel(wx.Panel):
         pub.sendMessage("LOG_MESSAGE", log_message="\nReady to plot...")
 
         try:
-            # Produce pairpolot using seaborn
+            # Produce pairplot using seaborn
             pair_plot = sns.pairplot(
                 df,
                 hue=column_name,
@@ -133,13 +133,13 @@ class PairPanel(wx.Panel):
             self.axes = self.figure.subplots(pp_rows, pp_cols)
 
             # Get the label and plotting order
-            xlabels, ylabels = [], []
+            x_labels, y_labels = [], []
             for ax in pair_plot.axes[-1, :]:
                 xlabel = ax.xaxis.get_label_text()
-                xlabels.append(xlabel)
+                x_labels.append(xlabel)
             for ax in pair_plot.axes[:, 0]:
                 ylabel = ax.yaxis.get_label_text()
-                ylabels.append(ylabel)
+                y_labels.append(ylabel)
 
             # Setup hue for plots
             hue_values = df[column_name].unique()
@@ -147,14 +147,14 @@ class PairPanel(wx.Panel):
             legend_color = palette.as_hex()
 
             # Mimic how seaborn produce the pairplot using matplotlib subplots
-            for i in range(len(xlabels)):
-                for j in range(len(ylabels)):
+            for i in range(len(x_labels)):
+                for j in range(len(y_labels)):
                     if i != j:
-                        # Non-diagnal locations, scatter plot
+                        # Non-diagonal locations, scatter plot
                         for num, value in enumerate(hue_values):
                             sns.regplot(
-                                x=df[xlabels[i]][df[column_name] == value],
-                                y=df[ylabels[j]][df[column_name] == value],
+                                x=df[x_labels[i]][df[column_name] == value],
+                                y=df[y_labels[j]][df[column_name] == value],
                                 data=df,
                                 scatter=True,
                                 fit_reg=False,
@@ -165,10 +165,10 @@ class PairPanel(wx.Panel):
                                 }
                             )
                     else:
-                        # Diagnal locations, distribution plot
+                        # Diagonal locations, distribution plot
                         for num, value in enumerate(hue_values):
                             sns.kdeplot(
-                                df[xlabels[i]][df[column_name] == value],
+                                df[x_labels[i]][df[column_name] == value],
                                 ax=self.axes[j, i],
                                 color=legend_color[num],
                                 legend=False,
@@ -178,15 +178,15 @@ class PairPanel(wx.Panel):
                     # Set plot labels, only set the outter plots to avoid
                     # label overlapping
                     if i == 0:
-                        if j == len(xlabels) - 1:
+                        if j == len(x_labels) - 1:
                             # Case for bottom left corner
-                            self.axes[j, i].set_xlabel(xlabels[i], fontsize=8)
+                            self.axes[j, i].set_xlabel(x_labels[i], fontsize=8)
                         else:
                             self.axes[j, i].set_xlabel("")
                             self.axes[j, i].set_xticklabels([]) # Turn off tick labels
-                        self.axes[j, i].set_ylabel(ylabels[j], fontsize=8)
-                    elif j == len(xlabels) - 1:
-                        self.axes[j, i].set_xlabel(xlabels[i], fontsize=8)
+                        self.axes[j, i].set_ylabel(y_labels[j], fontsize=8)
+                    elif j == len(x_labels) - 1:
+                        self.axes[j, i].set_xlabel(x_labels[i], fontsize=8)
                         self.axes[j, i].set_ylabel("")
                         self.axes[j, i].set_yticklabels([]) # Turn off tick labels
                     else:
@@ -250,7 +250,7 @@ class PairPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         """
-        Update datafram used for plotting.
+        Update dataframe used for plotting.
 
         Args:
             available_columns --> list: a list of available column headers

@@ -77,7 +77,7 @@ class LogPanel(wx.Panel):
 
     def PrintMessage(self, log_message):
         """
-        The main funciton used to receive all the messages from different
+        The main function used to receive all the messages from different
         panels among the software, and display the messages in the log panel.
 
         Args:

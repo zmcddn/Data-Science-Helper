@@ -79,17 +79,17 @@ class ScatterPanel(wx.Panel):
         """
 
         selected_column_id_x = self.column_x.GetCurrentSelection()
-        selcted_column_x = self.available_columns[selected_column_id_x]
+        selected_column_x = self.available_columns[selected_column_id_x]
 
         selected_column_id_y = self.column_y.GetCurrentSelection()
-        selcted_column_y = self.available_columns[selected_column_id_y]
+        selected_column_y = self.available_columns[selected_column_id_y]
 
         if selected_column_id_x > 0 and selected_column_id_y > 0:
             self.draw_scatter(
-                selcted_column_x,
-                selcted_column_y,
-                self.df[selcted_column_x],
-                self.df[selcted_column_y],
+                selected_column_x,
+                selected_column_y,
+                self.df[selected_column_x],
+                self.df[selected_column_y],
             )
 
     def draw_scatter(self, column_x, column_y, data_x, data_y):
@@ -107,7 +107,7 @@ class ScatterPanel(wx.Panel):
         Returns: None
         """
 
-        # Reset plot forst
+        # Reset plot first
         self.axes.clear()
 
         try:
@@ -125,7 +125,7 @@ class ScatterPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         """
-        Update datafram used for plotting.
+        Update dataframe used for plotting.
 
         Args:
             available_columns --> list: a list of available column headers

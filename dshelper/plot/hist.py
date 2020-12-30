@@ -69,9 +69,9 @@ class HistPanel(wx.Panel):
         """
 
         selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selcted_column = self.available_columns[selected_column_id]
+        selected_column = self.available_columns[selected_column_id]
 
-        self.draw_hist(selcted_column, self.df[selcted_column])
+        self.draw_hist(selected_column, self.df[selected_column])
 
     def draw_hist(self, column_name, data):
         """
@@ -86,7 +86,7 @@ class HistPanel(wx.Panel):
         Returns: None
         """
 
-        # Reset plot forst
+        # Reset plot first
         self.axes.clear()
 
         try:
@@ -109,7 +109,7 @@ class HistPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         """
-        Update datafram used for plotting.
+        Update dataframe used for plotting.
 
         Args:
             available_columns --> list: a list of available column headers
@@ -124,7 +124,7 @@ class HistPanel(wx.Panel):
 
 
 if __name__ == "__main__":
-    # Test for indivial panel layout
+    # Test for individual panel layout
     app = wx.App(0)
     frame = wx.Frame(None, wx.ID_ANY)
     fa = HistPanel(frame)

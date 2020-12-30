@@ -116,19 +116,19 @@ class BoxViolinPanel(wx.Panel):
         """
 
         selected_column_id_x = self.column_x.GetCurrentSelection()
-        selcted_column_x = self.available_columns[selected_column_id_x]
+        selected_column_x = self.available_columns[selected_column_id_x]
 
         selected_column_id_y = self.column_y.GetCurrentSelection()
-        selcted_column_y = self.available_columns[selected_column_id_y]
+        selected_column_y = self.available_columns[selected_column_id_y]
 
         selected_column_id_hue = self.column_hue.GetCurrentSelection()
-        selcted_column_hue = self.available_columns[selected_column_id_hue]
+        selected_column_hue = self.available_columns[selected_column_id_hue]
 
         if selected_column_id_x > 0 and selected_column_id_y > 0 and selected_column_id_hue > 0:
             self.draw_plots(
-                selcted_column_x,
-                selcted_column_y,
-                selcted_column_hue,
+                selected_column_x,
+                selected_column_y,
+                selected_column_hue,
             )
 
     def draw_plots(self, column_x, column_y, column_hue):
@@ -163,7 +163,7 @@ class BoxViolinPanel(wx.Panel):
             sns.violinplot(x=column_x, y=column_y, hue=column_hue, data=self.df, split=True, ax=self.violin_axes)
         except ValueError as e:
             # log Error
-            _log_message = "\nVolin plot failed due to error:\n--> {}".format(e)
+            _log_message = "\nViolin plot failed due to error:\n--> {}".format(e)
             pub.sendMessage("LOG_MESSAGE", log_message=_log_message)
 
         # Set plot style
@@ -179,7 +179,7 @@ class BoxViolinPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         """
-        Update datafram used for plotting.
+        Update dataframe used for plotting.
 
         Args:
             available_columns --> list: a list of available column headers

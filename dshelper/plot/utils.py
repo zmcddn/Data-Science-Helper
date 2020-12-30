@@ -69,7 +69,7 @@ def prepare_data(df):
 
                 except (ValueError, TypeError) as e:
                     encoding_drop_columns.append(original_column_name)
-                    _message = "{}Column [{}] droped <--".format(
+                    _message = "{}Column [{}] dropped <--".format(
                         _spacing, original_column_name
                     )
                     pub.sendMessage("LOG_MESSAGE", log_message=_message)

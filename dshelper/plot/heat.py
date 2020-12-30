@@ -127,17 +127,17 @@ class HeatPanel(wx.Panel):
         """
 
         selected_column_id_1 = self.column1.GetCurrentSelection()
-        selcted_column_1 = self.available_columns[selected_column_id_1]
+        selected_column_1 = self.available_columns[selected_column_id_1]
 
         selected_column_id_2 = self.column2.GetCurrentSelection()
-        selcted_column_2 = self.available_columns[selected_column_id_2]
+        selected_column_2 = self.available_columns[selected_column_id_2]
 
         if selected_column_id_1 > 0 and selected_column_id_2 > 0:
             self.draw_heat(
-                selcted_column_1,
-                selcted_column_2,
-                self.df[selcted_column_1],
-                self.df[selcted_column_2],
+                selected_column_1,
+                selected_column_2,
+                self.df[selected_column_1],
+                self.df[selected_column_2],
             )
 
     def draw_heat(self, column1, column2, data1, data2):
@@ -263,7 +263,7 @@ class HeatPanel(wx.Panel):
 
     def update_available_column(self, available_columns):
         """
-        Update datafram used for plotting.
+        Update dataframe used for plotting.
 
         Args:
             available_columns --> list: a list of available column headers

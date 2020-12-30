@@ -195,7 +195,7 @@ class DataTablePanel(wx.Panel):
 
     def OnColMoved(self, colId, oldPos):
         """
-        Function calculates where the column is dragged and droped.
+        Function calculates where the column is dragged and dropped.
 
         Args:
             colId: the column id in wxpython
@@ -215,7 +215,7 @@ class DataTablePanel(wx.Panel):
         # print(colId, "from", oldPos, "to", newPos)
         pub.sendMessage("LOG_MESSAGE", log_message=log_message)
 
-        # Reset the draged column for re-ploting the df
+        # Reset the dragged column for re-ploting the df
         # otherwise selecting the datafrom will skip columns
         self.grid.SetColPos(colId, oldPos)
 
@@ -249,7 +249,7 @@ class DataTablePanel(wx.Panel):
         Updates the displayed dataframe with new locations of columns.
 
         Args:
-            df --> pandas dataframe: df with differnt column order to be displayed
+            df --> pandas dataframe: df with different column order to be displayed
         Returns: None
         """
 
@@ -475,7 +475,7 @@ class ColumnSelectionPanel(wx.Panel):
                 if previous_column in self.enabled_columns:
                     column_index = self.enabled_columns.index(previous_column) + 1
                     index_found = True
-                    # print("inser index:", column_index)
+                    # print("insert index:", column_index)
                     break
 
             if not index_found:
