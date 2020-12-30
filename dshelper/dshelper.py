@@ -23,8 +23,10 @@ from pubsub import pub
 try:
     from .data import data_panel as data
     from .plot import plot_panel as plot
+    from .datasets import fetch_titanic
 except (ModuleNotFoundError, ImportError):
     import data, plot
+    from datasets import fetch_titanic
 
 # Python 2 compatibility
 try:
@@ -43,22 +45,7 @@ def get_df():
         np.nan, index=list(range(30)), columns=['A','B','C','D','E','F','G']
     )
 
-    # try:
-    #     # Import as module, use absolute path
-    #     dir_path = os.path.abspath(os.path.dirname("train.csv"))
-    #     csv_filename = os.path.join(dir_path, "dshelper\\titanic_data\\train.csv")
-    #     df = pd.read_csv(csv_filename)
-    # except FileNotFoundError:
-    #     # Run as function, use relative path
-    #     df = pd.read_csv("./titanic_data/train.csv")
-
-    # # Insert some random dates into the df
-    # random_dates = [
-    #     datetime.date(2016, 1, 1) + datetime.timedelta(days=int(days))
-    #     for days in np.random.randint(1, 50, df.shape[0])
-    # ]
-    # # Insert to df
-    # df.insert(0, "Random Date", random_dates)
+    # df = fetch_titanic(with_random_date=True)
 
     return df
 
