@@ -347,6 +347,7 @@ class ColumnSelectionPanel(wx.Panel):
                     str(non_null_count[num]),
                     str(null_count[num]),
                     "{:.2%}".format(non_null_percentage[num]),
+                    str(self.df[self.df.columns[num]].nunique()),
                 )
             )
 
@@ -358,7 +359,8 @@ class ColumnSelectionPanel(wx.Panel):
         self.column_list.InsertColumn(1, "Type")
         self.column_list.InsertColumn(2, "Non Null")
         self.column_list.InsertColumn(3, "Null")
-        self.column_list.InsertColumn(4, "Non Null Percentage")
+        self.column_list.InsertColumn(4, "Non Null %")
+        self.column_list.InsertColumn(5, "Distinct Values")
 
         idx = 0
         for row in rows:
@@ -369,6 +371,7 @@ class ColumnSelectionPanel(wx.Panel):
                 self.column_list.SetStringItem(index, 2, row[2])
                 self.column_list.SetStringItem(index, 3, row[3])
                 self.column_list.SetStringItem(index, 4, row[4])
+                self.column_list.SetStringItem(index, 5, row[5])
             else:
                 # wxpython 4 way
                 index = self.column_list.InsertItem(idx, row[0])
@@ -376,6 +379,7 @@ class ColumnSelectionPanel(wx.Panel):
                 self.column_list.SetItem(index, 2, row[2])
                 self.column_list.SetItem(index, 3, row[3])
                 self.column_list.SetItem(index, 4, row[4])
+                self.column_list.SetItem(index, 5, row[5])
             idx += 1
 
         # Set the background color of the table
@@ -515,6 +519,7 @@ class ColumnSelectionPanel(wx.Panel):
                     self.column_list.SetStringItem(index, 2, self.rows[old_position][2])
                     self.column_list.SetStringItem(index, 3, self.rows[old_position][3])
                     self.column_list.SetStringItem(index, 4, self.rows[old_position][4])
+                    self.column_list.SetStringItem(index, 5, self.rows[old_position][5])
                 else:
                     # wxpython 4 way
                     index = self.column_list.InsertItem(idx, self.rows[old_position][0])
@@ -522,6 +527,7 @@ class ColumnSelectionPanel(wx.Panel):
                     self.column_list.SetItem(index, 2, self.rows[old_position][2])
                     self.column_list.SetItem(index, 3, self.rows[old_position][3])
                     self.column_list.SetItem(index, 4, self.rows[old_position][4])
+                    self.column_list.SetItem(index, 5, self.rows[old_position][5])
 
                 # Set inserted row background color
                 self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
