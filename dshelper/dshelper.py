@@ -421,6 +421,7 @@ class MainFrame(wx.Frame):
             # forrtl: error (200): program aborting due to control-C event
             try:
                 import win32api
+
                 def doSaneThing(sig, func=None):
                     return True
                 win32api.SetConsoleCtrlHandler(doSaneThing, 1)

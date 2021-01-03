@@ -4,7 +4,6 @@ import wx
 
 import pandas as pd
 import numpy as np
-from numpy import arange, sin, pi
 
 from pubsub import pub
 
@@ -18,14 +17,13 @@ try:
 except ImportError:
     pass
 
-# import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
-import matplotlib.cm as cm
 
 from .utils import prepare_data
+from .base import create_bitmap_dropdown_menu
 
 
 class HeatPanel(wx.Panel):
@@ -72,11 +70,11 @@ class HeatPanel(wx.Panel):
         # Drop-down select boxes
         self.text_y_axis = wx.StaticText(self.buttonpanel, label='Y Axis:')
         self.text_x_axis = wx.StaticText(self.buttonpanel, label='X Axis:')
-        self.column1 = wx.ComboBox(
-            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        self.column1 = create_bitmap_dropdown_menu(
+            self.buttonpanel, self.available_columns, self.df
         )
-        self.column2 = wx.ComboBox(
-            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        self.column2 = create_bitmap_dropdown_menu(
+            self.buttonpanel, self.available_columns, self.df
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
@@ -126,13 +124,10 @@ class HeatPanel(wx.Panel):
         It only triggers plot when both columns are selected from the dropdown menu
         """
 
-        selected_column_id_1 = self.column1.GetCurrentSelection()
-        selected_column_1 = self.available_columns[selected_column_id_1]
+        selected_column_1 = self.column1.GetStringSelection()
+        selected_column_2 = self.column2.GetStringSelection()
 
-        selected_column_id_2 = self.column2.GetCurrentSelection()
-        selected_column_2 = self.available_columns[selected_column_id_2]
-
-        if selected_column_id_1 > 0 and selected_column_id_2 > 0:
+        if selected_column_1 and selected_column_2:
             self.draw_heat(
                 selected_column_1,
                 selected_column_2,

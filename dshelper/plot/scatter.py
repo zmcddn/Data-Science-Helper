@@ -2,10 +2,6 @@ import sys
 
 import wx
 
-import pandas as pd
-import numpy as np
-from numpy import arange, sin, pi
-
 from pubsub import pub
 
 import matplotlib
@@ -18,10 +14,11 @@ try:
 except ImportError:
     pass
 
-# import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
+
+from .base import create_bitmap_dropdown_menu
 
 
 class ScatterPanel(wx.Panel):
@@ -49,11 +46,11 @@ class ScatterPanel(wx.Panel):
         # Drop-down select boxes
         self.text_y_axis = wx.StaticText(self, label="Y Axis:")
         self.text_x_axis = wx.StaticText(self, label="X Axis:")
-        self.column_x = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+        self.column_x = create_bitmap_dropdown_menu(
+            self, self.available_columns, self.df
         )
-        self.column_y = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+        self.column_y = create_bitmap_dropdown_menu(
+            self, self.available_columns, self.df
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
@@ -78,13 +75,10 @@ class ScatterPanel(wx.Panel):
         It only triggers plot when both columns are selected from the dropdown menu
         """
 
-        selected_column_id_x = self.column_x.GetCurrentSelection()
-        selected_column_x = self.available_columns[selected_column_id_x]
+        selected_column_x = self.column_x.GetStringSelection()
+        selected_column_y = self.column_y.GetStringSelection()
 
-        selected_column_id_y = self.column_y.GetCurrentSelection()
-        selected_column_y = self.available_columns[selected_column_id_y]
-
-        if selected_column_id_x > 0 and selected_column_id_y > 0:
+        if selected_column_x and selected_column_y:
             self.draw_scatter(
                 selected_column_x,
                 selected_column_y,

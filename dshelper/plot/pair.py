@@ -2,10 +2,6 @@ import sys
 
 import wx
 
-import pandas as pd
-import numpy as np
-from numpy import arange, sin, pi
-
 from pubsub import pub
 
 import matplotlib
@@ -18,15 +14,12 @@ try:
 except ImportError:
     pass
 
-from sklearn.preprocessing import LabelEncoder
-
-# import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 
 from .utils import prepare_data
+from .base import create_bitmap_dropdown_menu
 
 
 class PairPanel(wx.Panel):
@@ -53,8 +46,8 @@ class PairPanel(wx.Panel):
         self.toolbar = NavigationToolbar(self.canvas)
 
         self.text_hue = wx.StaticText(self, label="Hue:")
-        self.dropdown_menu = wx.ComboBox(
-            self, choices=self.hue_columns, style=wx.CB_READONLY
+        self.dropdown_menu = create_bitmap_dropdown_menu(
+            self, self.hue_columns, self.df
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
@@ -76,8 +69,7 @@ class PairPanel(wx.Panel):
         Function responses to select column from dropdown menu.
         """
 
-        selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selected_column = self.hue_columns[selected_column_id]
+        selected_column = self.dropdown_menu.GetStringSelection()
 
         self.draw_pair(selected_column)
 

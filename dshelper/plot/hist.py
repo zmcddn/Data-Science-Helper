@@ -2,10 +2,6 @@ import sys
 
 import wx
 
-import pandas as pd
-import numpy as np
-from numpy import arange, sin, pi
-
 from pubsub import pub
 
 import matplotlib
@@ -18,10 +14,11 @@ try:
 except ImportError:
     pass
 
-# import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
+
+from .base import create_bitmap_dropdown_menu
 
 
 class HistPanel(wx.Panel):
@@ -46,9 +43,10 @@ class HistPanel(wx.Panel):
 
         self.toolbar = NavigationToolbar(self.canvas)
 
-        self.dropdown_menu = wx.ComboBox(
-            self, choices=self.available_columns, style=wx.CB_READONLY
+        self.dropdown_menu = create_bitmap_dropdown_menu(
+            self, self.available_columns, self.df
         )
+
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
         toolbar_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -68,8 +66,7 @@ class HistPanel(wx.Panel):
         Function responses to select column from dropdown menu.
         """
 
-        selected_column_id = self.dropdown_menu.GetCurrentSelection()
-        selected_column = self.available_columns[selected_column_id]
+        selected_column = self.dropdown_menu.GetStringSelection()
 
         self.draw_hist(selected_column, self.df[selected_column])
 

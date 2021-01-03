@@ -2,10 +2,6 @@ import sys
 
 import wx
 
-import pandas as pd
-import numpy as np
-from numpy import arange, sin, pi
-
 from pubsub import pub
 
 import matplotlib
@@ -18,13 +14,11 @@ try:
 except ImportError:
     pass
 
-# import matplotlib.pyplot as plt
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
-from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
-import matplotlib.cm as cm
 
+from .base import create_bitmap_dropdown_menu
 
 
 class BoxViolinPanel(wx.Panel):
@@ -66,14 +60,14 @@ class BoxViolinPanel(wx.Panel):
         self.text_y_axis = wx.StaticText(self.buttonpanel, label='Y Axis:')
         self.text_x_axis = wx.StaticText(self.buttonpanel, label='X Axis:')
         self.text_hue = wx.StaticText(self.buttonpanel, label='Hue:')
-        self.column_x = wx.ComboBox(
-            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        self.column_x = create_bitmap_dropdown_menu(
+            self.buttonpanel, self.available_columns, self.df
         )
-        self.column_y = wx.ComboBox(
-            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        self.column_y = create_bitmap_dropdown_menu(
+            self.buttonpanel, self.available_columns, self.df
         )
-        self.column_hue = wx.ComboBox(
-            self.buttonpanel, choices=self.available_columns, style=wx.CB_READONLY
+        self.column_hue = create_bitmap_dropdown_menu(
+            self.buttonpanel, self.available_columns, self.df
         )
         self.Bind(wx.EVT_COMBOBOX, self.column_selected)
 
@@ -115,16 +109,11 @@ class BoxViolinPanel(wx.Panel):
         dropdown list
         """
 
-        selected_column_id_x = self.column_x.GetCurrentSelection()
-        selected_column_x = self.available_columns[selected_column_id_x]
+        selected_column_x = self.column_x.GetStringSelection()
+        selected_column_y = self.column_y.GetStringSelection()
+        selected_column_hue = self.column_hue.GetStringSelection()
 
-        selected_column_id_y = self.column_y.GetCurrentSelection()
-        selected_column_y = self.available_columns[selected_column_id_y]
-
-        selected_column_id_hue = self.column_hue.GetCurrentSelection()
-        selected_column_hue = self.available_columns[selected_column_id_hue]
-
-        if selected_column_id_x > 0 and selected_column_id_y > 0 and selected_column_id_hue > 0:
+        if selected_column_x and selected_column_y and selected_column_hue:
             self.draw_plots(
                 selected_column_x,
                 selected_column_y,
