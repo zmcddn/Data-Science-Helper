@@ -10,10 +10,9 @@ License: MIT (see LICENSE for details)
 
 import datetime
 import sys
-import os
+import string
 
 import pandas as pd
-import numpy as np
 
 import wx
 import wx.grid
@@ -39,13 +38,13 @@ ODD_ROW_COLOUR = "#F0F8FF"
 GRID_LINE_COLOUR = "#D3D3D3"
 
 
-def get_df():
+def get_empty_df():
     # Initial dataframe
     df = pd.DataFrame(
-        np.nan, index=list(range(30)), columns=['A','B','C','D','E','F','G']
+        " " * 10,
+        index=list(range(40)),
+        columns=[letter for letter in string.ascii_uppercase],
     )
-
-    # df = fetch_titanic(with_random_date=True)
 
     return df
 
@@ -349,15 +348,17 @@ class MainFrame(wx.Frame):
     Return: None
     """
 
-    def __init__(self, df, app=None):
+    def __init__(self, df, with_demo=False, app=None):
         wx.Frame.__init__(self, None, -1, title="Data Science Helper")
 
         self.app = app
 
         if df is not None:
             self.df = prepare_df(df)
+        elif with_demo:
+            self.df = fetch_titanic(with_random_date=True)
         else:
-            self.df = get_df()
+            self.df = get_empty_df()
         cols = self.df.shape[1]
         rows = self.df.shape[0]
         _memory_use = self.df.memory_usage(deep=True).sum() / 1024
@@ -449,7 +450,7 @@ def prepare_df(df):
     return df
 
 
-def dshelp(df):
+def dshelp(df, with_demo=False):
     """
     The function to run dshelper
 
@@ -459,10 +460,10 @@ def dshelp(df):
     """
 
     app = wx.App()
-    frame = MainFrame(df, app)
+    MainFrame(df, with_demo, app)
     app.MainLoop()
 
 
 if __name__ == "__main__":
     import dshelper
-    dshelper.dshelp(None)
+    dshelper.dshelp(df=None, with_demo=True)

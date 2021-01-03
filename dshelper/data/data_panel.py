@@ -9,11 +9,8 @@ Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-import datetime
-import io
 
 import pandas as pd
-import numpy as np
 
 import wx
 import wx.grid
@@ -51,7 +48,7 @@ class DataTable(GRID_TABLE_CONSTRUCTOR):
             self.data = pd.DataFrame(
                 index=list(range(1, self.INIT_ROWS)),
                 columns=list(range(1, self.INIT_COLS)),
-            ).fillna("")
+            ).fillna(" ")
         else:
             self.data = data
 
