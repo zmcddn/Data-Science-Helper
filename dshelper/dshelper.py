@@ -39,7 +39,8 @@ GRID_LINE_COLOUR = "#D3D3D3"
 
 
 def get_empty_df():
-    # Initial dataframe
+    """Initiate an empty dataframe for rendering"""
+
     df = pd.DataFrame(
         " " * 10,
         index=list(range(40)),
