@@ -11,6 +11,7 @@ License: MIT (see LICENSE for details)
 import datetime
 import sys
 import string
+import os
 
 import pandas as pd
 
@@ -48,6 +49,17 @@ def get_empty_df():
     )
 
     return df
+
+
+def show_splash():
+    # create, show and return the splash screen
+    filename = os.path.join(os.getcwd(), "media", "splash.png")
+    bitmap = wx.Bitmap(filename, wx.BITMAP_TYPE_PNG)
+    splash = wx.adv.SplashScreen(
+        bitmap, wx.adv.SPLASH_CENTRE_ON_SCREEN | wx.adv.SPLASH_NO_TIMEOUT, 0, None, -1
+    )
+    splash.Show()
+    return splash
 
 
 class LogPanel(wx.Panel):
@@ -462,10 +474,13 @@ def dshelp(df, with_demo=False):
     """
 
     app = wx.App()
+    splash = show_splash()
     MainFrame(df, with_demo, app)
+    splash.Destroy()
     app.MainLoop()
 
 
 if __name__ == "__main__":
     import dshelper
+
     dshelper.dshelp(df=None)

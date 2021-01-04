@@ -16,7 +16,7 @@ def create_bitmap_dropdown_menu(panel, available_columns, df):
 
         if os.path.exists(filename):
             image = wx.Image(filename)
-            image.Rescale(16, 16)
+            image.Rescale(16, 16, quality=wx.IMAGE_QUALITY_HIGH)
             icon = wx.Bitmap(image)
             dropdown_menu.Append(column, bitmap=icon)
         else:
