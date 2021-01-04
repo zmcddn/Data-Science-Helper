@@ -8,10 +8,8 @@ Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-import datetime
 import sys
 import string
-import os
 
 import pandas as pd
 
@@ -22,10 +20,11 @@ from pubsub import pub
 # Local package imports
 try:
     from .data import data_panel as data
-    from .plot import plot_panel as plot
+    from .plots import plot_panel as plot
     from .datasets import fetch_titanic
 except (ModuleNotFoundError, ImportError):
-    import data, plot
+    import data, plots
+    from components import MyStatusBar, show_splash, LogPanel
     from datasets import fetch_titanic
 
 # Python 2 compatibility
@@ -37,69 +36,6 @@ except NameError:
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
 GRID_LINE_COLOUR = "#D3D3D3"
-
-
-def get_empty_df():
-    """Initiate an empty dataframe for rendering"""
-
-    df = pd.DataFrame(
-        " " * 20,
-        index=list(range(20)),
-        columns=[letter for letter in string.ascii_uppercase[:10]],
-    )
-
-    return df
-
-
-def show_splash():
-    # create, show and return the splash screen
-    filename = os.path.join(os.getcwd(), "media", "splash.png")
-    bitmap = wx.Bitmap(filename, wx.BITMAP_TYPE_PNG)
-    splash = wx.adv.SplashScreen(
-        bitmap, wx.adv.SPLASH_CENTRE_ON_SCREEN | wx.adv.SPLASH_NO_TIMEOUT, 0, None, -1
-    )
-    splash.Show()
-    return splash
-
-
-class LogPanel(wx.Panel):
-    """
-    A panel displays the system logs.
-    """
-
-    def __init__(self, parent, id):
-        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
-
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
-        self.log = wx.TextCtrl(self, style=style)
-        self.log.SetBackgroundColour("#D5F5E3")
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.log, 1, wx.ALL | wx.EXPAND)
-        self.SetSizer(sizer)
-
-        self.log.write(
-            "Log begins here at time: {:%d, %b %Y, %H:%M}\n".format(
-                datetime.datetime.now()
-            )
-        )
-        self.log.write("wxPython version: {}\n".format(wx.__version__))
-
-        pub.subscribe(self.PrintMessage, "LOG_MESSAGE")
-
-    def PrintMessage(self, log_message):
-        """
-        The main function used to receive all the messages from different
-        panels among the software, and display the messages in the log panel.
-
-        Args:
-            log_message --> string: the message needs to be displayed
-        Returns: None
-        Raises: None
-        """
-
-        self.log.write(log_message)
-        self.log.write("\n")
 
 
 class DFSplitterPanel(wx.Panel):
@@ -130,7 +66,7 @@ class DFSplitterPanel(wx.Panel):
         # each page serves a different function
         data_notebook = wx.Notebook(self.topPanel)
         self.raw_data_page = data.DataTablePanel(data_notebook, -1, df=self.df)
-        self.plot_page = plot.PlotPanel(data_notebook, df=self.df)
+        self.plot_page = plots.PlotPanel(data_notebook, df=self.df)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
 
@@ -240,118 +176,6 @@ class SideSplitterPanel(wx.Panel):
             self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
 
 
-class MyStatusBar(wx.StatusBar):
-    """
-    Custom status bar for positioning extra functioning buttons inside the
-    status bar.
-
-    Args: None
-    Returns: None
-    """
-
-    def __init__(self, parent, memory_usage):
-        wx.StatusBar.__init__(self, parent)
-
-        self.SetFieldsCount(5)
-        self.SetStatusWidths([80, 120, -1, 200, 200])
-        self.sizeChanged = False
-        self.Bind(wx.EVT_SIZE, self.OnSize)
-        self.Bind(wx.EVT_IDLE, self.OnIdle)
-
-        # Text fields with initial content
-        self.SetStatusText("some text", 0)
-        self.SetStatusText("some text", 1)
-        self.memory = wx.StaticText(self, -1, f" Memory Usage: {memory_usage}")
-        self.memory.SetForegroundColour("blue")
-
-        # Field for buttons
-        self.hide_show_bottom = wx.ToggleButton(self, -1, "Hide Bottom Panel")
-        self.hide_show_side = wx.ToggleButton(self, -1, "Hide Right Panel")
-
-        # Set button styles for attention
-        self.hide_show_bottom.SetForegroundColour("orange")
-        self.hide_show_bottom.SetBackgroundColour("#FDE68B")  # light yellow
-        self.hide_show_side.SetForegroundColour("orange")
-        self.hide_show_side.SetBackgroundColour("#FDE68B")  # light yellow
-
-        # Button functions
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.hide_show_panels)
-
-        # set the initial position for buttons
-        self.Reposition()
-
-    def OnSize(self, evt):
-        evt.Skip()
-        self.Reposition()  # for normal size events
-
-        # Set a flag so the idle time handler will also do the repositioning.
-        # It is done this way to get around a buglet where GetFieldRect is not
-        # accurate during the EVT_SIZE resulting from a frame maximize.
-        self.sizeChanged = True
-
-    def OnIdle(self, evt):
-        if self.sizeChanged:
-            self.Reposition()
-
-    # reposition the buttons
-    def Reposition(self):
-        """Reposition for widgets"""
-
-        # Static text (memory usage)
-        rect0 = self.GetFieldRect(2)
-        rect0.x += 1
-        rect0.y += 1
-        self.memory.SetRect(rect0)
-
-        # Button (hide show bottom panel)
-        rect1 = self.GetFieldRect(3)
-        rect1.x += 1
-        rect1.y += 1
-        self.hide_show_bottom.SetRect(rect1)
-
-        # Button (hide show side panel)
-        rect2 = self.GetFieldRect(4)
-        rect2.x += 1
-        rect2.y += 1
-        self.hide_show_side.SetRect(rect2)
-
-        self.sizeChanged = False
-
-    def hide_show_panels(self, event):
-        """
-        One button function that responds to two buttons clicking event.
-        Each button's clicking event is captured and turn to its own function.
-        """
-
-        # Function for bottom panel
-        if self.hide_show_bottom.GetValue() == True:
-            # Hide bottom panel
-            pub.sendMessage("BOTTOM_PANEL", status="hide")
-            self.hide_show_bottom.SetLabel("Show Bottom Panel")
-            self.hide_show_bottom.SetForegroundColour("blue")
-            self.hide_show_bottom.SetBackgroundColour("#C8FD8B")  # light green
-        elif self.hide_show_bottom.GetValue() == False:
-            # Show bottom panel
-            pub.sendMessage("BOTTOM_PANEL", status="show")
-            self.hide_show_bottom.SetLabel("Hide Bottom Panel")
-            self.hide_show_bottom.SetForegroundColour("orange")
-            self.hide_show_bottom.SetBackgroundColour("#FDE68B")  # light yellow
-
-        # Function for right panel
-        if self.hide_show_side.GetValue() == True:
-            # Hide bottom panel
-            pub.sendMessage("RIGHT_PANEL", status="hide")
-            self.hide_show_side.SetLabel("Show Right Panel")
-            self.hide_show_side.SetForegroundColour("blue")
-            self.hide_show_side.SetBackgroundColour("#C8FD8B")  # light green
-        elif self.hide_show_side.GetValue() == False:
-            # Show bottom panel
-            pub.sendMessage("RIGHT_PANEL", status="show")
-            self.hide_show_side.SetLabel("Hide Right Panel")
-            self.hide_show_side.SetForegroundColour("orange")
-            self.hide_show_side.SetBackgroundColour("#FDE68B")  # light yellow
-
-
 class MainFrame(wx.Frame):
     """
     Main frame to display all the content
@@ -372,10 +196,11 @@ class MainFrame(wx.Frame):
             self.df = fetch_titanic(with_random_date=True)
         else:
             self.df = get_empty_df()
-        cols = self.df.shape[1]
-        rows = self.df.shape[0]
+
+        rows, cols = self.df.shape
         _memory_use = self.df.memory_usage(deep=True).sum() / 1024
         # Note that this would be equivalent to df.info(memory_usage='deep')
+
         if _memory_use > 1024:
             memory_usage = "{:.2f} MB".format(_memory_use / 1024)
         else:
@@ -441,6 +266,18 @@ class MainFrame(wx.Frame):
                 pass
         # # event.Skip()
         self.app.ExitMainLoop()
+
+
+def get_empty_df():
+    """Initiate an empty dataframe for rendering"""
+
+    df = pd.DataFrame(
+        " " * 20,
+        index=list(range(20)),
+        columns=[letter for letter in string.ascii_uppercase[:10]],
+    )
+
+    return df
 
 
 def prepare_df(df):

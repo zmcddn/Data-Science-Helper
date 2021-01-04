@@ -22,8 +22,8 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToo
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
 
+from components import create_bitmap_dropdown_menu
 from .utils import prepare_data
-from .base import create_bitmap_dropdown_menu
 
 
 class HeatPanel(wx.Panel):
