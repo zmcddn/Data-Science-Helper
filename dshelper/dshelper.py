@@ -42,9 +42,9 @@ def get_empty_df():
     """Initiate an empty dataframe for rendering"""
 
     df = pd.DataFrame(
-        " " * 10,
-        index=list(range(40)),
-        columns=[letter for letter in string.ascii_uppercase],
+        " " * 20,
+        index=list(range(20)),
+        columns=[letter for letter in string.ascii_uppercase[:10]],
     )
 
     return df
@@ -468,4 +468,4 @@ def dshelp(df, with_demo=False):
 
 if __name__ == "__main__":
     import dshelper
-    dshelper.dshelp(df=None, with_demo=True)
+    dshelper.dshelp(df=None)
