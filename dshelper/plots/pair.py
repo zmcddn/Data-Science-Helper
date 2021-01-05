@@ -202,12 +202,12 @@ class PairPanel(wx.Panel):
             )
 
             self.figure.subplots_adjust(
-                left=0.03, # the left side of the subplots of the figure
-                bottom=0.08, # the bottom of the subplots of the figure
-                right=0.93, # the right side of the subplots of the figure
-                top=0.97,   # the top of the subplots of the figure
-                wspace=0.12, # the amount of width reserved for space between subplots
-                hspace=0.12, # the amount of height reserved for space between subplots
+                left=0.03,  # the left side of the subplots of the figure
+                bottom=0.08,  # the bottom of the subplots of the figure
+                right=0.93,  # the right side of the subplots of the figure
+                top=0.97,  # the top of the subplots of the figure
+                wspace=0.12,  # the amount of width reserved for space between subplots
+                hspace=0.12,  # the amount of height reserved for space between subplots
             )
 
         except ValueError as e:

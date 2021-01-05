@@ -67,7 +67,7 @@ def prepare_data(df):
                     )
                     encoding_drop_columns.append(original_column_name)
 
-                except (ValueError, TypeError) as e:
+                except (ValueError, TypeError):
                     encoding_drop_columns.append(original_column_name)
                     _message = "{}Column [{}] dropped <--".format(
                         _spacing, original_column_name

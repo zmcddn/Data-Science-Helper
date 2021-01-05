@@ -239,7 +239,7 @@ class DataTablePanel(wx.Panel):
             )
 
             # Update df for display
-            self._update_data(df)
+            wx.CallAfter(self._update_data, df)
 
     def _update_data(self, df):
         """

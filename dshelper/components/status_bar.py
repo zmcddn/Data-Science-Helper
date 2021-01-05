@@ -1,5 +1,7 @@
 import wx
 
+from pubsub import pub
+
 
 class MyStatusBar(wx.StatusBar):
     """

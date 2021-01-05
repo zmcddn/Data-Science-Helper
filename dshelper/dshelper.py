@@ -193,7 +193,7 @@ class MainFrame(wx.Frame):
         if df is not None:
             self.df = prepare_df(df)
         elif with_demo:
-            self.df = fetch_titanic(with_random_date=True)
+            self.df = data.reduce_mem_usage(fetch_titanic(with_random_date=True))
         else:
             self.df = get_empty_df()
 
@@ -290,6 +290,8 @@ def prepare_df(df):
     Return:
         df --> pandas dataframe: cleaned df
     """
+
+    df = data.reduce_mem_usage(df)
 
     columns = list(df.columns.values)
     for num, item in enumerate(columns):
