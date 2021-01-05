@@ -363,23 +363,8 @@ class ColumnSelectionPanel(wx.Panel):
         self.column_list.InsertColumn(5, "Distinct Values")
 
         idx = 0
-        for row in rows:
-            if int(wx.__version__[0]) < 4:
-                # wxpython 3 compatibility
-                index = self.column_list.InsertStringItem(idx, row[0])
-                self.column_list.SetStringItem(index, 1, row[1])
-                self.column_list.SetStringItem(index, 2, row[2])
-                self.column_list.SetStringItem(index, 3, row[3])
-                self.column_list.SetStringItem(index, 4, row[4])
-                self.column_list.SetStringItem(index, 5, row[5])
-            else:
-                # wxpython 4 way
-                index = self.column_list.InsertItem(idx, row[0])
-                self.column_list.SetItem(index, 1, row[1])
-                self.column_list.SetItem(index, 2, row[2])
-                self.column_list.SetItem(index, 3, row[3])
-                self.column_list.SetItem(index, 4, row[4])
-                self.column_list.SetItem(index, 5, row[5])
+        for position in range(len(rows)):
+            self._set_row_content(self.rows, idx, position)
             idx += 1
 
         # Set the background color of the table
@@ -486,6 +471,20 @@ class ColumnSelectionPanel(wx.Panel):
 
         return column_index, index_found
 
+    def _set_row_content(self, row, idx, position):
+        if int(wx.__version__[0]) < 4:
+            # wxpython 3 compatibility
+            index = self.column_list.InsertStringItem(idx, row[position][0])
+            for pos in range(1, len(row[position])):
+                self.column_list.SetStringItem(index, pos, row[position][pos])
+        else:
+            # wxpython 4 way
+            index = self.column_list.InsertItem(idx, row[position][0])
+            for pos in range(1, len(row[position])):
+                self.column_list.SetItem(index, pos, row[position][pos])
+
+        return index
+
     def _update_column(self, columns, old_position, new_position):
         """
         An internal helper function to update the column positions for
@@ -510,24 +509,8 @@ class ColumnSelectionPanel(wx.Panel):
                     idx = new_position - 1
                 elif old_position > new_position:
                     idx = new_position
-                if int(wx.__version__[0]) < 4:
-                    # wxpython 3 compatibility
-                    index = self.column_list.InsertStringItem(
-                        idx, self.rows[old_position][0]
-                    )
-                    self.column_list.SetStringItem(index, 1, self.rows[old_position][1])
-                    self.column_list.SetStringItem(index, 2, self.rows[old_position][2])
-                    self.column_list.SetStringItem(index, 3, self.rows[old_position][3])
-                    self.column_list.SetStringItem(index, 4, self.rows[old_position][4])
-                    self.column_list.SetStringItem(index, 5, self.rows[old_position][5])
-                else:
-                    # wxpython 4 way
-                    index = self.column_list.InsertItem(idx, self.rows[old_position][0])
-                    self.column_list.SetItem(index, 1, self.rows[old_position][1])
-                    self.column_list.SetItem(index, 2, self.rows[old_position][2])
-                    self.column_list.SetItem(index, 3, self.rows[old_position][3])
-                    self.column_list.SetItem(index, 4, self.rows[old_position][4])
-                    self.column_list.SetItem(index, 5, self.rows[old_position][5])
+
+                index = self._set_row_content(self.rows, idx, old_position)
 
                 # Set inserted row background color
                 self.column_list.SetItemBackgroundColour(index, "#D5F5E3")
