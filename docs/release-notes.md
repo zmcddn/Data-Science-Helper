@@ -9,6 +9,7 @@
 - 🆕 Add new arg to initiate dataframe for GUI rendering
 - 🆕 Add indicator for distinct values in each column for the selection box so its easier to select column for drawing
 - 🆕 Add new column on the right side panel to show distinct values for each df column
+- 🆕 Add new dynamic log display in the status bar
 
 ### Fixes
 

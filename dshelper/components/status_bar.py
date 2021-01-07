@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import wx
 
 from pubsub import pub
@@ -15,8 +17,8 @@ class MyStatusBar(wx.StatusBar):
     def __init__(self, parent, memory_usage):
         wx.StatusBar.__init__(self, parent)
 
-        self.SetFieldsCount(5)
-        self.SetStatusWidths([80, 120, -1, 200, 200])
+        self.SetFieldsCount(6)
+        self.SetStatusWidths([80, 120, 200, -1, 200, 200])
         self.sizeChanged = False
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_IDLE, self.OnIdle)
@@ -26,6 +28,15 @@ class MyStatusBar(wx.StatusBar):
         self.SetStatusText("some text", 1)
         self.memory = wx.StaticText(self, -1, f" Memory Usage: {memory_usage}")
         self.memory.SetForegroundColour("blue")
+
+        self.log_info = wx.StaticText(
+            self,
+            -1,
+            (
+                "Welcome to Data Science Helper :-)  "
+                "Starting at: {:%d, %b %Y, %H:%M}".format(datetime.now())
+            )
+        )
 
         # Field for buttons
         self.hide_show_bottom = wx.ToggleButton(self, -1, "Hide Bottom Panel")
@@ -42,6 +53,21 @@ class MyStatusBar(wx.StatusBar):
 
         # set the initial position for buttons
         self.Reposition()
+
+        pub.subscribe(self.print_message, "LOG_MESSAGE")
+
+    def print_message(self, log_message):
+        """
+        The main function used to receive all the messages from different
+        panels among the software, and display the messages in the log panel.
+
+        Args:
+            log_message --> string: the message needs to be displayed
+        Returns: None
+        Raises: None
+        """
+
+        self.log_info.SetLabel(log_message.rstrip().split("\n")[-1])
 
     def OnSize(self, evt):
         evt.Skip()
@@ -60,22 +86,28 @@ class MyStatusBar(wx.StatusBar):
         """Reposition for widgets inside status bar"""
 
         # Static text (memory usage)
-        rect0 = self.GetFieldRect(2)
-        rect0.x += 1
-        rect0.y += 1
-        self.memory.SetRect(rect0)
+        rect_memory = self.GetFieldRect(2)
+        rect_memory.x += 1
+        rect_memory.y += 1
+        self.memory.SetRect(rect_memory)
+
+        # Static text (log info)
+        rect_log = self.GetFieldRect(3)
+        rect_log.x += 1
+        rect_log.y += 1
+        self.log_info.SetRect(rect_log)
 
         # Button (hide show bottom panel)
-        rect1 = self.GetFieldRect(3)
-        rect1.x += 1
-        rect1.y += 1
-        self.hide_show_bottom.SetRect(rect1)
+        rect_hide_show_bottom = self.GetFieldRect(4)
+        rect_hide_show_bottom.x += 1
+        rect_hide_show_bottom.y += 1
+        self.hide_show_bottom.SetRect(rect_hide_show_bottom)
 
         # Button (hide show side panel)
-        rect2 = self.GetFieldRect(4)
-        rect2.x += 1
-        rect2.y += 1
-        self.hide_show_side.SetRect(rect2)
+        rect_hide_show_side = self.GetFieldRect(5)
+        rect_hide_show_side.x += 1
+        rect_hide_show_side.y += 1
+        self.hide_show_side.SetRect(rect_hide_show_side)
 
         self.sizeChanged = False
 
