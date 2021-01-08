@@ -1,8 +1,8 @@
 import sys
 
 import pandas as pd
-
 from pubsub import pub
+from sklearn.preprocessing import LabelEncoder
 
 import matplotlib
 if "linux" not in sys.platform:
@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 
-from sklearn.preprocessing import LabelEncoder
+import wx
 
 
 def prepare_data(df):
@@ -94,6 +94,8 @@ def prepare_data(df):
                     df[original_column_name].median(), inplace=True
                 )
 
+        wx.Yield()
+
     # Drop all the original categorical data columns
     if encoding_drop_columns:
         df.drop(encoding_drop_columns, axis=1, inplace=True)
@@ -115,97 +117,98 @@ def make_pair_plot(figure, df, column_name, available_columns):
 
     df = prepare_data(df[available_columns])
 
+    wx.Yield()
+
     pub.sendMessage("LOG_MESSAGE", log_message="\nReady to plot...")
 
     try:
-        # Produce pairplot using seaborn
-        pair_plot = sns.pairplot(
-            df,
-            hue=column_name,
-            palette="deep",
-            size=1.2,
-            diag_kind="kde",
-            diag_kws=dict(shade=True),
-            plot_kws=dict(s=10),
-        )
+        # Produce pairwise data relationships using seaborn
+        pair_plot = sns.PairGrid(df, hue=column_name)
 
-        # Get the number of rows and columns from the seaborn pairplot
+        wx.Yield()
+
+        # Get the number of rows and columns from the seaborn pairplot grid
         pp_rows = len(pair_plot.axes)
         pp_cols = len(pair_plot.axes[0])
 
-        # Update axes to the corresponding number of subplots from pairplot
+        # Update axes to the corresponding number of subplots from pairplot grid
         axes = figure.subplots(pp_rows, pp_cols)
 
+        wx.Yield()
+
         # Get the label and plotting order
-        x_labels, y_labels = [], []
-        for ax in pair_plot.axes[-1, :]:
-            xlabel = ax.xaxis.get_label_text()
-            x_labels.append(xlabel)
-        for ax in pair_plot.axes[:, 0]:
-            ylabel = ax.yaxis.get_label_text()
-            y_labels.append(ylabel)
+        x_labels = [ax.xaxis.get_label_text() for ax in pair_plot.axes[-1, :]]
+        y_labels = [ax.yaxis.get_label_text() for ax in pair_plot.axes[:, 0]]
+
+        wx.Yield()
 
         # Setup hue for plots
         hue_values = df[column_name].unique()
-        palette = sns.color_palette("muted") # get seaborn default colors
+        palette = sns.color_palette("muted")  # get seaborn default colors
         legend_color = palette.as_hex()
 
         # Mimic how seaborn produce the pairplot using matplotlib subplots
-        for i in range(len(x_labels)):
-            for j in range(len(y_labels)):
-                if i != j:
+        for x in range(len(x_labels)):
+            for y in range(len(y_labels)):
+                if x != y:
                     # Non-diagonal locations, scatter plot
                     for num, value in enumerate(hue_values):
                         sns.regplot(
-                            x=df[x_labels[i]][df[column_name] == value],
-                            y=df[y_labels[j]][df[column_name] == value],
+                            x=df[x_labels[x]][df[column_name] == value],
+                            y=df[y_labels[y]][df[column_name] == value],
                             data=df,
                             scatter=True,
                             fit_reg=False,
-                            ax=axes[j, i],
+                            ax=axes[y, x],
                             scatter_kws={
-                                's':10, # Set dot size
-                                'facecolor':legend_color[num], # Set dot color
+                                's': 10,  # Set dot size
+                                'facecolor': legend_color[num],  # Set dot color
                             }
                         )
+
+                        wx.Yield()
                 else:
                     # Diagonal locations, distribution plot
                     for num, value in enumerate(hue_values):
                         sns.kdeplot(
-                            df[x_labels[i]][df[column_name] == value],
-                            ax=axes[j, i],
+                            df[x_labels[x]][df[column_name] == value],
+                            ax=axes[y, x],
                             color=legend_color[num],
                             legend=False,
                             shade=True,
                         )
 
+                        wx.Yield()
+
                 # Set plot labels, only set the outter plots to avoid
                 # label overlapping
-                if i == 0:
-                    if j == len(x_labels) - 1:
+                if x == 0:
+                    if y == len(x_labels) - 1:
                         # Case for bottom left corner
-                        axes[j, i].set_xlabel(x_labels[i], fontsize=8)
+                        axes[y, x].set_xlabel(x_labels[x], fontsize=8)
                     else:
-                        axes[j, i].set_xlabel("")
-                        axes[j, i].set_xticklabels([]) # Turn off tick labels
-                    axes[j, i].set_ylabel(y_labels[j], fontsize=8)
-                elif j == len(x_labels) - 1:
-                    axes[j, i].set_xlabel(x_labels[i], fontsize=8)
-                    axes[j, i].set_ylabel("")
-                    axes[j, i].set_yticklabels([]) # Turn off tick labels
+                        axes[y, x].set_xlabel("")
+                        axes[y, x].set_xticklabels([])  # Turn off tick labels
+                    axes[y, x].set_ylabel(y_labels[y], fontsize=8)
+                elif y == len(x_labels) - 1:
+                    axes[y, x].set_xlabel(x_labels[x], fontsize=8)
+                    axes[y, x].set_ylabel("")
+                    axes[y, x].set_yticklabels([])  # Turn off tick labels
                 else:
                     # Hide labels
-                    axes[j, i].set_xlabel("")
-                    axes[j, i].set_ylabel("")
+                    axes[y, x].set_xlabel("")
+                    axes[y, x].set_ylabel("")
 
                     # Turn off tick labels
-                    axes[j, i].set_xticklabels([])
-                    axes[j, i].set_yticklabels([])
+                    axes[y, x].set_xticklabels([])
+                    axes[y, x].set_yticklabels([])
 
         end_message = "Pair plots finished"
         pub.sendMessage("LOG_MESSAGE", log_message=end_message)
 
-        handles, _ = axes[0,0].get_legend_handles_labels()
+        wx.Yield()
+
+        handles, _ = axes[0, 0].get_legend_handles_labels()
         figure.legend(
             handles,
             labels=legend_labels,
