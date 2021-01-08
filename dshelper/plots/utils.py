@@ -208,9 +208,7 @@ def make_pair_plot(figure, df, column_name, available_columns):
 
         wx.Yield()
 
-        handles, _ = axes[0, 0].get_legend_handles_labels()
         figure.legend(
-            handles,
             labels=legend_labels,
             title=legend_title,
             loc='center right',
