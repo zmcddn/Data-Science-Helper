@@ -10,6 +10,7 @@
 - 🆕 Add indicator for distinct values in each column for the selection box so its easier to select column for drawing
 - 🆕 Add new column on the right side panel to show distinct values for each df column
 - 🆕 Add new dynamic log display in the status bar
+- 🆕 Add arg to turn on memory optimization upon loading dataframe
 
 ### Fixes
 

@@ -185,15 +185,18 @@ class MainFrame(wx.Frame):
     Return: None
     """
 
-    def __init__(self, df, with_demo=False, app=None):
+    def __init__(self, df, with_demo=False, reduce_mam=False, app=None):
         wx.Frame.__init__(self, None, -1, title="Data Science Helper")
 
         self.app = app
 
         if df is not None:
-            self.df = prepare_df(df)
+            self.df = prepare_df(df, reduce_mam)
         elif with_demo:
-            self.df = data.reduce_mem_usage(fetch_titanic(with_random_date=True))
+            if reduce_mam:
+                self.df = data.reduce_mem_usage(fetch_titanic(with_random_date=True))
+            else:
+                self.df = fetch_titanic(with_random_date=True)
         else:
             self.df = get_empty_df()
 
@@ -280,7 +283,7 @@ def get_empty_df():
     return df
 
 
-def prepare_df(df):
+def prepare_df(df, reduce_mem=False):
     """
     This function converts the df header into string format
     for the gui to be able to plot
@@ -291,7 +294,8 @@ def prepare_df(df):
         df --> pandas dataframe: cleaned df
     """
 
-    df = data.reduce_mem_usage(df)
+    if reduce_mem:
+        df = data.reduce_mem_usage(df)
 
     columns = list(df.columns.values)
     for num, item in enumerate(columns):
@@ -303,7 +307,7 @@ def prepare_df(df):
     return df
 
 
-def dshelp(df, with_demo=False):
+def dshelp(df, with_demo=False, reduce_mem=False):
     """
     The function to run dshelper
 
@@ -314,7 +318,7 @@ def dshelp(df, with_demo=False):
 
     app = wx.App()
     splash = show_splash()
-    MainFrame(df, with_demo, app)
+    MainFrame(df, with_demo, reduce_mem, app)
     splash.Destroy()
     app.MainLoop()
 
@@ -322,4 +326,4 @@ def dshelp(df, with_demo=False):
 if __name__ == "__main__":
     import dshelper
 
-    dshelper.dshelp(df=None)
+    dshelper.dshelp(df=None, reduce_mem=False)
