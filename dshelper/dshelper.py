@@ -237,22 +237,37 @@ class MainFrame(wx.Frame):
         Event function respond to the close of the main GUI window.
         """
 
+        event.Skip()
         self.Destroy()
-        # event.Skip()
 
-        # # make sure that all is closed
-        # for item in wx.GetTopLevelWindows():
-        #     print(item, isinstance(item, MainFrame))
-        #     if isinstance(item, MainFrame):
-        #         item.Destroy()
-            # if not isinstance(item, MainFrame):
-            #     if isinstance(item, wx.Dialog):
-            #         item.Destroy()
-            #     item.Close()
+        self._force_close_FigureFrameWx()
+        self._fix_control_c_quit()
+
+        self.app.ExitMainLoop()
+
+    @staticmethod
+    def _force_close_FigureFrameWx():
+        """
+        Force close FigureFrameWx window.
+        When use wxapp backend for matplotlib this could become a problem.
+
+        NOTE that this function is only needed when there is a pairplot for now.
+        We could dig more in to the pairplot to see what really happened if time allows
+        """
+
+        from matplotlib.backends.backend_wx import FigureFrameWx
+        for item in wx.GetTopLevelWindows():
+            if isinstance(item, FigureFrameWx):
+                item.Destroy()
+
+    @staticmethod
+    def _fix_control_c_quit():
+        """
+        Fix system related error:
+            forrtl: error (200): program aborting due to control-C event
+        """
 
         if "win32" in sys.platform:
-            # Fix system related error:
-            # forrtl: error (200): program aborting due to control-C event
             try:
                 import win32api
 
@@ -261,8 +276,6 @@ class MainFrame(wx.Frame):
                 win32api.SetConsoleCtrlHandler(doSaneThing, 1)
             except ModuleNotFoundError:
                 pass
-        # # event.Skip()
-        self.app.ExitMainLoop()
 
 
 def get_empty_df():
@@ -310,7 +323,7 @@ def dshelp(df, with_demo=False, reduce_mem=False):
     Returns: None
     """
 
-    app = wx.App()
+    app = wx.App(0)
     splash = show_splash()
     MainFrame(df, with_demo, reduce_mem, app)
     splash.Destroy()
