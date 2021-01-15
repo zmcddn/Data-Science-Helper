@@ -20,7 +20,7 @@ dshelper.dshelp(df)
 - ✅ Left click on the right panel to show/hide columns
 - ✅ Plots: histogram, heatmap, correlation, scatter, box, violin, pair 
 - ✅ Bottom right buttons to hide panels and focus on data set
-- ✅ Dockerized with make commands
+- ✅ Easy to use in command line, jupyter notebook and docker
 
 ## Plots
 

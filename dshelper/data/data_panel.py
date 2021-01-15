@@ -5,7 +5,7 @@ dshelper is a GUI for visualization of pandas dataframes.
 In addition, it provides some functionalities in helping with some exploratory
 analysis and examination of raw data
 
-Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
+Copyright (c) 2018 - 2021, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
@@ -17,11 +17,8 @@ import wx.grid
 import wx.lib.mixins.listctrl
 from pubsub import pub
 
-if int(wx.__version__[0]) < 4:
-    # Add compatibility with wxpython 3.*
-    GRID_TABLE_CONSTRUCTOR = wx.grid.PyGridTableBase
-else:
-    GRID_TABLE_CONSTRUCTOR = wx.grid.GridTableBase
+
+GRID_TABLE_CONSTRUCTOR = wx.grid.GridTableBase
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -472,16 +469,9 @@ class ColumnSelectionPanel(wx.Panel):
         return column_index, index_found
 
     def _set_row_content(self, row, idx, position):
-        if int(wx.__version__[0]) < 4:
-            # wxpython 3 compatibility
-            index = self.column_list.InsertStringItem(idx, row[position][0])
-            for pos in range(1, len(row[position])):
-                self.column_list.SetStringItem(index, pos, row[position][pos])
-        else:
-            # wxpython 4 way
-            index = self.column_list.InsertItem(idx, row[position][0])
-            for pos in range(1, len(row[position])):
-                self.column_list.SetItem(index, pos, row[position][pos])
+        index = self.column_list.InsertItem(idx, row[position][0])
+        for pos in range(1, len(row[position])):
+            self.column_list.SetItem(index, pos, row[position][pos])
 
         return index
 

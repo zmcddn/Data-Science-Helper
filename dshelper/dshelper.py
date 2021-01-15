@@ -4,7 +4,7 @@
 dshelper is a GUI for visualization of pandas dataframes.
 In addition, it provides some functionalities in helping with some exploratory analysis and examination of raw data
 
-Copyright (c) 2018 - 2019, Minchang (Carson) Zhang.
+Copyright (c) 2018 - 2021, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
@@ -26,12 +26,6 @@ except (ModuleNotFoundError, ImportError):
     import data, plots
     from components import MyStatusBar, show_splash, LogPanel
     from datasets import fetch_titanic
-
-# Python 2 compatibility
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
