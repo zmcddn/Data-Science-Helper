@@ -22,7 +22,7 @@ URL = 'https://github.com/zmcddn/Data-Science-Helper'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/zmcddn/Data-Science-Helper'
 VERSION = '0.2.0'
-PYTHON_REQUIRES = ">=3.7"
+PYTHON_REQUIRES = ">=3.6"
 
 INSTALL_REQUIRES = [
     'wxpython>=4.0',
@@ -47,13 +47,13 @@ PACKAGES = [
     'dshelper.components',
     'dshelper.data',
     'dshelper.datasets',
-    'dshelper.media',
     'dshelper.plots',
 ]
 
 CLASSIFIERS = [
     'Intended Audience :: Science/Research',
     "Programming Language :: Python",
+    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     from setuptools import setup
 
     import sys
-    if sys.version_info[:2] < (3, 7):
-        raise RuntimeError("dshelper requires python >= 3.7.")
+    if sys.version_info[:2] < (3, 6):
+        raise RuntimeError("dshelper requires python >= 3.6.")
 
     setup(
         name=DISTNAME,
