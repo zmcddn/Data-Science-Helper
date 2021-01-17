@@ -104,10 +104,6 @@ def prepare_data(df):
 
 
 def make_pair_plot(figure, df, column_name, available_columns):
-
-    # Reset plot, clean the axes
-    figure.clf()
-
     legend_labels = df[column_name].unique()
     legend_title = column_name
 
