@@ -20,6 +20,7 @@ dshelper.dshelp(df)
 - ✅ Left click on the right panel to show/hide columns
 - ✅ Plots: histogram, heatmap, correlation, scatter, box, violin, pair 
 - ✅ Bottom right buttons to hide panels and focus on data set
+- ✅ Easy to see memory usage and logs in bottom status bar
 - ✅ Easy to use in command line, jupyter notebook and docker
 
 ## Plots
@@ -76,7 +77,7 @@ And below are a few plots:
 * `conda install --yes --file requirements.txt` or `pip install -r requirements.txt`
 * In case the `PyPubSub` is not installed with conda, you can do `pip install PyPubSub`
 * `cd dshelper`
-* `python dshelper.py` (windows, linux) or `pythonw dshelper.py` (mac)
+* `python main_gui.py` (windows, linux) or `pythonw main_gui.py` (mac)
 
 For help with any dataframe, you can follow the following steps:
 * `import dshelper`
