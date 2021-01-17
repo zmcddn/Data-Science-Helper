@@ -17,15 +17,12 @@ import wx
 import wx.grid
 from pubsub import pub
 
-# Local package imports
-try:
-    from .data import data_panel as data
-    from .plots import plot_panel as plot
-    from .datasets import fetch_titanic
-except (ModuleNotFoundError, ImportError):
-    import data, plots
-    from components import MyStatusBar, show_splash, LogPanel
-    from datasets import fetch_titanic
+from dshelper.data import (
+    DataTablePanel, DataDescribePanel, ColumnSelectionPanel, reduce_mem_usage
+)
+from dshelper.plots import PlotPanel
+from dshelper.components import MyStatusBar, show_splash, LogPanel
+from dshelper.datasets import fetch_titanic
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
@@ -59,8 +56,8 @@ class DFSplitterPanel(wx.Panel):
         # Create a notebook for the top panel (data panel)
         # each page serves a different function
         data_notebook = wx.Notebook(self.topPanel)
-        self.raw_data_page = data.DataTablePanel(data_notebook, -1, df=self.df)
-        self.plot_page = plots.PlotPanel(data_notebook, df=self.df)
+        self.raw_data_page = DataTablePanel(data_notebook, -1, df=self.df)
+        self.plot_page = PlotPanel(data_notebook, df=self.df)
         self.raw_data_page.SetBackgroundColour("WHITE")
         self.plot_page.SetBackgroundColour("YELLOW")
 
@@ -73,7 +70,7 @@ class DFSplitterPanel(wx.Panel):
         sizer.Add(data_notebook, 1, wx.EXPAND | wx.SP_NOBORDER)
         self.topPanel.SetSizer(sizer)
 
-        self.data_describe = data.DataDescribePanel(
+        self.data_describe = DataDescribePanel(
             self.bottomPanel, -1, df=self.df
         )
         bottom_sizer = wx.BoxSizer()
@@ -132,7 +129,7 @@ class SideSplitterPanel(wx.Panel):
         # each page serves a different function
         data_notebook = wx.Notebook(self.rightPanel)
         data_notebook.SetBackgroundColour("WHITE")
-        self.column_page = data.ColumnSelectionPanel(
+        self.column_page = ColumnSelectionPanel(
             data_notebook, -1, df=self.df
         )
         self.log_page = LogPanel(data_notebook, -1)
@@ -188,7 +185,7 @@ class MainFrame(wx.Frame):
             self.df = prepare_df(df, reduce_mam)
         elif with_demo:
             if reduce_mam:
-                self.df = data.reduce_mem_usage(fetch_titanic(with_random_date=True))
+                self.df = reduce_mem_usage(fetch_titanic(with_random_date=True))
             else:
                 self.df = fetch_titanic(with_random_date=True)
         else:
@@ -302,7 +299,7 @@ def prepare_df(df, reduce_mem=False):
     """
 
     if reduce_mem:
-        df = data.reduce_mem_usage(df)
+        df = reduce_mem_usage(df)
 
     columns = list(df.columns.values)
     for num, item in enumerate(columns):
@@ -331,6 +328,6 @@ def dshelp(df, with_demo=False, reduce_mem=False):
 
 
 if __name__ == "__main__":
-    import dshelper
+    # import dshelper
 
-    dshelper.dshelp(df=None, reduce_mem=False)
+    dshelp(df=None, reduce_mem=False, with_demo=True)

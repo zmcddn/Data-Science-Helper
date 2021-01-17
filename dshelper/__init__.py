@@ -10,8 +10,8 @@ License: MIT (see LICENSE for details)
 
 from __future__ import absolute_import
 
-from .dshelper import dshelp  # noqa
-from . import data, plot  # noqa
+from .main_gui import dshelp  # noqa
+# from . import data, plot  # noqa
 
 
 __version__ = "0.1.0"

@@ -20,6 +20,6 @@ def create_bitmap_dropdown_menu(panel, available_columns, df):
             icon = wx.Bitmap(image)
             dropdown_menu.Append(column, bitmap=icon)
         else:
-            dropdown_menu.Append(column, bitmap=icon)
+            dropdown_menu.Append(column)
 
     return dropdown_menu

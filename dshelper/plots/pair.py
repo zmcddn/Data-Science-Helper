@@ -18,7 +18,7 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToolbar
 from matplotlib.figure import Figure
 
-from components import create_bitmap_dropdown_menu
+from dshelper.components import create_bitmap_dropdown_menu
 from .utils import make_pair_plot
 
 
