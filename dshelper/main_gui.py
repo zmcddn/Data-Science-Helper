@@ -237,25 +237,9 @@ class MainFrame(wx.Frame):
         event.Skip()
         self.Destroy()
 
-        self._force_close_FigureFrameWx()
         self._fix_control_c_quit()
 
         self.app.ExitMainLoop()
-
-    @staticmethod
-    def _force_close_FigureFrameWx():
-        """
-        Force close FigureFrameWx window.
-        When use wxapp backend for matplotlib this could become a problem.
-
-        NOTE that this function is only needed when there is a pairplot for now.
-        We could dig more in to the pairplot to see what really happened if time allows
-        """
-
-        from matplotlib.backends.backend_wx import FigureFrameWx
-        for item in wx.GetTopLevelWindows():
-            if isinstance(item, FigureFrameWx):
-                item.Destroy()
 
     @staticmethod
     def _fix_control_c_quit():
