@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
       libxrandr-dev \
       libsdl-dev \
       libnotify-dev \
-      libsm-dev 
+      libsm-dev
 
 RUN /bin/bash -c 'pip3 install --upgrade pip'
 RUN /bin/bash -c 'pip3 install --default-timeout=1000 -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-16.04/ wxPython'
@@ -30,4 +30,4 @@ RUN /bin/bash -c 'pip3 install matplotlib seaborn numpy scipy pandas scikit-lear
 COPY . /src
 WORKDIR /src/dshelper
 
-CMD ["python3", "dshelper.py"]
+CMD ["python3", "main_gui.py"]
