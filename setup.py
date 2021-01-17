@@ -24,6 +24,7 @@ DOWNLOAD_URL = 'https://github.com/zmcddn/Data-Science-Helper'
 VERSION = '0.2.0'
 PYTHON_REQUIRES = ">=3.6"
 
+
 INSTALL_REQUIRES = [
     'wxpython>=4.0',
     'matplotlib>=3.3.0',
@@ -33,6 +34,7 @@ INSTALL_REQUIRES = [
     'seaborn>=0.11.0',
 ]
 
+
 EXTRAS_REQUIRE = {
     'all': [
         'statsmodels>=0.12.0',
@@ -41,14 +43,6 @@ EXTRAS_REQUIRE = {
     ]
 }
 
-
-PACKAGES = [
-    'dshelper',
-    'dshelper.components',
-    'dshelper.data',
-    'dshelper.datasets',
-    'dshelper.plots',
-]
 
 CLASSIFIERS = [
     'Intended Audience :: Science/Research',
@@ -68,7 +62,7 @@ CLASSIFIERS = [
 
 if __name__ == "__main__":
 
-    from setuptools import setup
+    from setuptools import setup, find_packages
 
     import sys
     if sys.version_info[:2] < (3, 6):
@@ -89,6 +83,8 @@ if __name__ == "__main__":
         python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
-        packages=PACKAGES,
-        classifiers=CLASSIFIERS
+        packages=find_packages(),
+        package_data={'dshelper': ['*.png', '*.csv']},
+        include_package_data=True,
+        classifiers=CLASSIFIERS,
     )
