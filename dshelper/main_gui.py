@@ -321,4 +321,4 @@ def dshelp(df, with_demo=False, reduce_mem=False):
 
 
 if __name__ == "__main__":
-    dshelp(df=None, reduce_mem=False, with_demo=True)
+    dshelp(df=None, reduce_mem=False)
