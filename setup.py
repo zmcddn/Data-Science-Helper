@@ -46,17 +46,26 @@ EXTRAS_REQUIRE = {
 
 CLASSIFIERS = [
     'Intended Audience :: Science/Research',
+    'Intended Audience :: End Users/Desktop',
     "Programming Language :: Python",
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Environment :: Console',
+    'Environment :: MacOS X',
+    'Environment :: Win32 (MS Windows)',
+    'Operating System :: Microsoft :: Windows :: Windows 10',
+    'Operating System :: POSIX :: Linux',
+    'Topic :: Scientific/Engineering :: Artificial Intelligence',
     'Topic :: Scientific/Engineering :: Visualization',
-    'Topic :: Scientific/Engineering :: Analytics',
+    'Topic :: Scientific/Engineering :: Information Analysis',
+    'Topic :: Software Development :: User Interfaces',
     'Topic :: Multimedia :: Graphics',
     'Operating System :: OS Independent',
-    'Framework :: Wxpython',
+    'Framework :: Matplotlib',
 ]
 
 
