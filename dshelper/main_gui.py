@@ -14,7 +14,6 @@ import string
 import pandas as pd
 
 import wx
-import wx.grid
 from pubsub import pub
 
 from dshelper.data import (
