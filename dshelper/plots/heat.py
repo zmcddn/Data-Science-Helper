@@ -22,7 +22,13 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx as NavigationToo
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 from matplotlib.figure import Figure
 
-from dshelper.components import create_bitmap_dropdown_menu
+try:
+    # local import
+    from components import create_bitmap_dropdown_menu
+except (ModuleNotFoundError, ImportError):
+    # Package import
+    from dshelper.components import create_bitmap_dropdown_menu
+
 from .utils import prepare_data
 
 

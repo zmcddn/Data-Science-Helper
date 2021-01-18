@@ -8,10 +8,7 @@ Copyright (c) 2018 - 2021, Minchang (Carson) Zhang.
 License: MIT (see LICENSE for details)
 """
 
-from __future__ import absolute_import
-
 from .main_gui import dshelp  # noqa
-# from . import data, plot  # noqa
 
 
 __version__ = "0.1.0"

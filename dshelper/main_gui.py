@@ -16,12 +16,22 @@ import pandas as pd
 import wx
 from pubsub import pub
 
-from dshelper.data import (
-    DataTablePanel, DataDescribePanel, ColumnSelectionPanel, reduce_mem_usage
-)
-from dshelper.plots import PlotPanel
-from dshelper.components import MyStatusBar, show_splash, LogPanel
-from dshelper.datasets import fetch_titanic
+try:
+    # Local import
+    from data import (
+        DataTablePanel, DataDescribePanel, ColumnSelectionPanel, reduce_mem_usage
+    )
+    from plots import PlotPanel
+    from components import MyStatusBar, show_splash, LogPanel
+    from datasets import fetch_titanic
+except (ModuleNotFoundError, ImportError):
+    # Package import
+    from dshelper.data import (
+        DataTablePanel, DataDescribePanel, ColumnSelectionPanel, reduce_mem_usage
+    )
+    from dshelper.plots import PlotPanel
+    from dshelper.components import MyStatusBar, show_splash, LogPanel
+    from dshelper.datasets import fetch_titanic
 
 EVEN_ROW_COLOUR = "#CCE6FF"
 ODD_ROW_COLOUR = "#F0F8FF"
